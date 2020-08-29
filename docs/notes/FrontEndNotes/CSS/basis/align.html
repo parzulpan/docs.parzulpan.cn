@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS 对齐</title>
+    <style>
+        .center {
+            margin: auto;
+            width: 60%;
+            border: 3px solid #73AD21;
+            padding: 10px;
+        }
+        .text-center {
+            text-align: center;
+            border: 3px solid green;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<!--元素居中对齐-->
+<!--要水平居中对齐一个元素(如 <div>)，可以使用margin: auto。设置到元素的宽度将防止它溢出到容器的边缘。元素通过指定宽度，并将两边的空外边距平均分配。-->
+<h2>元素居中对齐</h2>
+<p>水平居中块级元素(如div)，可以使用margin: auto;</p>
+<div class="center">
+    <p>
+        <b>注意：</b>
+        使用 margin:auto 无法兼容 IE8, 除非 !DOCTYPE 已经声明
+    </p>
+</div>
+<br/>
+
+<!--文本居中对齐-->
+<div class="text-center">
+    <p>文本居中对齐</p>
+</div>
+<br/>
+
+<!--图片居中对齐-->
+<!--要让图片居中对齐，可以使用margin: auto，并将它放到块元素中-->
+<h2>图片居中对齐</h2>
+<p>要让图片居中对齐，可以使用margin: auto，并将它放到块元素中</p>
+<img src="../resources/test.png" alt="test" style="width:40%">
+
+<!--设置容器上下 padding 相同实现垂直居中和使用 line-height=height 实现垂直居中仅对单行文本有效，当文本行数超过单行时：-->
+<!--1）padding：文本仍然处于容器垂直居中的位置，但是容器的 height 会随着文本行数的增加而增大；-->
+<!--2）line-height=height：容器的 height 不变，line-height 是文本的行间距，文本会溢出容器显示；-->
+<!--多行文本可使用 vertical-align: middle; 来实现元素的垂直居中，但是如果子元素的内容体积大于父元素的内容体积时，仍然会溢出，后面需要使用文字溢出处理来解决。-->
+
+
+</body>
+</html>

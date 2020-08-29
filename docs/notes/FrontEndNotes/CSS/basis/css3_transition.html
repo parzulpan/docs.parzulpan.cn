@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS3 过渡</title>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+
+        div:hover {
+            width: 300px;
+            transform: rotate(180deg);
+            -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+        }
+
+        div#div1 {
+            transition: width 2s;   /*如果未指定的期限，transition将没有任何效果，因为默认值是0 */
+            -webkit-transition: width 2s;
+        }
+
+        div#div2 {
+            transition: width 2s, height 2s, transform 2s;  /*要添加多个样式的变换效果，添加的属性由逗号分隔*/
+            -webkit-transition: width 2s, height 2s, -webkit-transform 2s; /* For Safari 3.1 to 6.0 */
+
+        }
+
+    </style>
+</head>
+<body>
+<!--CSS3 过渡是元素从一种样式逐渐改变为另一种的效果。-->
+<!--要实现这一点，必须规定两项内容：-->
+<!--指定要添加效果的CSS属性-->
+<!--指定效果的持续时间。-->
+
+<div id="div1">鼠标移动到 div 元素上，查看过渡效果。</div>
+
+<hr>
+
+<div id="div2">鼠标移动到 div 元素上，查看过渡效果。</div>
+
+
+<!--属性	                        描述-->
+<!--transition	                简写属性，用于在一个属性中设置四个过渡属性-->
+<!--transition-property	        规定应用过渡的 CSS 属性的名称-->
+<!--transition-duration	        定义过渡效果花费的时间。默认是 0-->
+<!--transition-timing-function	规定过渡效果的时间曲线。默认是 "ease"-->
+<!--transition-delay	        规定过渡效果何时开始。默认是 0-->
+
+</body>
+</html>

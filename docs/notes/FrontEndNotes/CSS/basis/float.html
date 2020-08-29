@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS 浮动</title>
+    <style>
+        img {
+            float: right;
+        }
+        .thumbnail {
+            float: left;
+            width:400px;
+            height:400px;
+            margin:5px;
+        }
+    </style>
+</head>
+<body>
+<!--它会使元素向左或者向右移动，其周围的元素也会重新排列，它往往用于图像，但它在布局时一样非常有用-->
+<!--元素的水平方向浮动，意味着元素只能左右移动而不能上下移动。 一个浮动元素会尽量向左或向右移动，直到它的外边缘碰到包含框或另一个浮动框的边框为止。-->
+<!--浮动元素之后的元素将围绕它。浮动元素之前的元素将不会受到影响。-->
+<p>在下面的段落中，我们添加了一个 <b>float:right</b> 的图片。导致图片将会浮动在段落的右边。</p>
+<p>
+    <img src="../resources/test.png" width="400" height="400" alt=""/>
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+    这是一些文本。这是一些文本。这是一些文本。
+</p>
+
+<!--把几个浮动的元素放到一起，如果有空间的话，它们将彼此相邻-->
+<p>试着调整窗口,看看当图片没有足够的空间会发生什么。</p>
+<img class="thumbnail" src="../resources/test.png" width="400" height="400" alt="">
+<img class="thumbnail" src="../resources/test.png" width="400" height="400" alt="">
+<img class="thumbnail" src="../resources/test.png" width="400" height="400" alt="">
+<img class="thumbnail" src="../resources/test.png" width="400" height="400" alt="">
+<img class="thumbnail" src="../resources/test.png" width="400" height="400" alt="">
+<img class="thumbnail" src="../resources/test.png" width="400" height="400" alt="">
+<img class="thumbnail" src="../resources/test.png" width="400" height="400" alt="">
+<img class="thumbnail" src="../resources/test.png" width="400" height="400 alt="">
+
+
+
+</body>
+</html>

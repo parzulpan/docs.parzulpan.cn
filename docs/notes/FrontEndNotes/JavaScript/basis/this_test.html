@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script>
+    'use strict';
+
+    let user = {
+        name: "John",
+        hi() { alert(this.name); },
+        bye() { alert("Bye"); }
+    };
+
+    user.hi(); // John（简单的调用工作正常）
+
+    // 现在我们要根据 name 来决定调用 user.hi 还是 user.bye。
+    user.name === "John" ? user.hi() : user.bye(); // 报错！
+</script>

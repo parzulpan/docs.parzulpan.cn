@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5 视频</title>
+</head>
+<body>
+<p>点击下列视频进行播放</p>
+<video controls>
+    <source src="../resources/test.mp4" type="video/mp4">
+    您的浏览器不支持 HTML5 video 标签。
+</video>
+
+<!--自定义按钮-->
+<div style="text-align:center; ">
+    <button onclick="playPause()">播放/暂停</button>
+    <button onclick="makeBig()">放大</button>
+    <button onclick="makeSmall()">缩小</button>
+    <button onclick="makeNormal()">普通</button>
+    <br/>
+    <video id="video1" width="420">
+        <source src="../resources/test.mp4" type="video/mp4">
+        您的浏览器不支持 HTML5 video 标签。
+    </video>
+</div>
+
+<script>
+    let video = document.getElementById("video1");
+
+    function playPause() {
+        if(video.paused) {
+            video.play();
+        } else {
+            video.pause();
+        }
+    }
+
+    function makeBig() {
+        video.width = 560;
+    }
+
+    function makeSmall() {
+        video.width = 320;
+    }
+
+    function makeNormal() {
+        video.width = 420;
+    }
+
+</script>
+
+</body>
+</html>

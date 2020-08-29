@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS3 背景</title>
+    <style>
+        #bg1 {
+            background: url(../resources/test.png) right bottom no-repeat, url(../resources/test2.png) left top repeat;
+            padding: 15px;
+        }
+
+        #bg2 {
+            background-size: 80px 60px;
+            /*background-size:100% 100%;  伸展背景图像完全填充内容区域*/
+            background: url(../resources/test.png) no-repeat;
+            padding-top: 40px;
+        }
+
+        #bg3 {
+            border: 1px solid black;
+            padding: 35px;
+            background-image: url(../resources/test.png);
+            background-repeat: no-repeat;
+            background-position: left;
+            background-origin: content-box;
+        }
+
+    </style>
+</head>
+<body>
+<!--CSS3中可以通过background-image属性添加背景图片。-->
+<!--不同的背景图像和图像用逗号隔开，所有的图片中显示在最顶端的为第一张。-->
+<div id="bg1">
+    <h1>标题1</h1>
+    <p>CSS3中可以通过background-image属性添加背景图片。</p>
+    <p>不同的背景图像和图像用逗号隔开，所有的图片中显示在最顶端的为第一张。</p>
+</div>
+
+<!--background-size指定背景图像的大小。CSS3以前，背景图像大小由图像的实际大小决定。-->
+<!--CSS3中可以指定背景图片，让重新在不同的环境中指定背景图片的大小。您可以指定像素或百分比大小。-->
+<!--指定的大小是相对于父元素的宽度和高度的百分比的大小。-->
+<div id="bg2">
+    <h1>标题2</h1>
+    <p>background-size指定背景图像的大小。CSS3以前，背景图像大小由图像的实际大小决定。</p>
+    <p>CSS3中可以指定背景图片，让重新在不同的环境中指定背景图片的大小。您可以指定像素或百分比大小。</p>
+    <p>指定的大小是相对于父元素的宽度和高度的百分比的大小。</p>
+</div>
+
+<!--background-origin 属性指定了背景图像的位置区域。-->
+<!--content-box, padding-box,和 border-box区域内可以放置背景图像。-->
+<div id="bg3">
+    background-origin 属性指定了背景图像的位置区域。
+    content-box, padding-box,和 border-box区域内可以放置背景图像。
+</div>
+
+</body>
+</html>

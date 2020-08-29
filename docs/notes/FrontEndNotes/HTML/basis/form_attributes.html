@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5 表单属性</title>
+</head>
+<body>
+<!--autocomplete 属性规定 form 或 input 域应该拥有自动完成功能。当用户在自动完成域中开始输入时，浏览器应该在该域中显示填写的选项。-->
+<form action="" autocomplete="on">
+    FirstName: <input type="text" name="firstName"><br/>
+    LastName: <input type="text" name="lastName"><br/>
+    EMail: <input type="email" name="email" autocomplete="off">
+    <input type="submit">
+</form>
+
+<!--novalidate 属性是一个 boolean(布尔) 属性,它规定在提交表单时不应该验证 form 或 input 域-->
+<form action="" novalidate>
+    EMail: <input type="email" name="email">
+    <input type="submit">
+</form>
+
+<!--autofocus 属性是一个 boolean 属性,它规定在页面加载时，域自动地获得焦点-->
+Focus: <input type="text" name="focus" autofocus>
+
+<!--formaction属性用于描述表单提交的URL地址,它会覆盖<form>元素中的action属性-->
+<form action="">
+    FirstName: <input type="text" name="firstName"><br>
+    LastName: <input type="text" name="lastName"><br>
+    <input type="submit" value="提交"><br>
+    <input type="submit" formaction=""  value="提交">
+</form>
+
+<!--formenctype 属性描述了表单提交到服务器的数据编码 (只对form表单中 method="post" 表单),它会覆盖 form 元素的 enctype 属性-->
+<form action="" method="post">
+    First name: <input type="text" name="fname"><br>
+    <input type="submit" value="提交">
+    <input type="submit" formenctype="multipart/form-data" value="以 Multipart/form-data 提交">
+</form>
+
+<!--formmethod 属性定义了表单提交的方式,它会覆盖了 <form> 元素的 method 属性-->
+<form action="" method="get">
+    FirstName: <input type="text" name="firstName"><br>
+    LastName: <input type="text" name="lastName"><br>
+    <input type="submit" value="提交">
+    <input type="submit" formmethod="post" formaction=""  value="使用 POST 提交">
+</form>
+
+<!--未完待续,看api即可-->
+
+
+</body>
+</html>

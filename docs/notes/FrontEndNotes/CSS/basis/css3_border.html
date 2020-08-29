@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS3 边框</title>
+    <style>
+        div[type=test_radius] {
+            border: 2px solid #A1A1A1;
+            padding: 10px 40px;
+            background: #DDDDDD;
+            width: 300px;
+            border-radius: 25px;
+        }
+
+        div[type=test_shadow] {
+            width: 300px;
+            height: 100px;
+            background-color: yellow;
+            box-shadow: 10px 10px 5px #888888;
+        }
+
+        div[type=test_image] {
+            border: 15px solid transparent;
+            width: 250px;
+            padding: 10px 20px;
+        }
+        #round {
+            -webkit-border-image: url(../resources/test.png) 30 30 round;    /* Safari 5 and older */
+            -o-border-image: url(../resources/test.png) 30 30 round;     /* Opera */
+            border-image: url(../resources/test.png) 30 30 round;
+        }
+        #stretch {
+            -webkit-border-image: url(../resources/test.png) 30 30 stretch;    /* Safari 5 and older */
+            -o-border-image: url(../resources/test.png) 30 30 stretch;     /* Opera */
+            border-image: url(../resources/test.png) 30 30 stretch;
+        }
+
+
+    </style>
+</head>
+<body>
+<!--用 CSS3，可以创建圆角边框，添加阴影框，并作为边界的形象而不使用设计程序-->
+<!--有以下的边框属性：-->
+<!--1. border-radius-->
+<!--2. box-shadow-->
+<!--3. border-image-->
+
+<div type="test_radius">border-radius 属性允许您为元素添加圆角边框！ </div>
+
+<hr>
+
+<div type="test_shadow">box-shadow</div>
+
+<hr>
+
+<p>border-image 属性用于设置图片的边框。</p>
+<div type="test_image" id="round">这里，图像平铺（重复）来填充该区域。</div>
+<div type="test_image" id="stretch">这里，图像被拉伸以填充该区域。</div>
+<p>这是使用的图片素材：</p>
+<img src="../resources/test.png" alt="这是使用的图片素材"/>
+
+
+</body>
+</html>

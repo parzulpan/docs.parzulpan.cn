@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5 Web SQL数据库</title>
+</head>
+<body>
+
+<!--openDatabase：这个方法使用现有的数据库或者新建的数据库创建一个数据库对象。-->
+<!--transaction：这个方法让我们能够控制一个事务，以及基于这种情况执行提交或者回滚。-->
+<!--executeSql：这个方法用于执行实际的 SQL 查询。-->
+<div id="status" name="status">状态信息: </div>
+
+<script>
+    // 打开数据库
+    // 数据库名称, 版本号, 描述文本, 数据库大小, 创建回调, 会在创建数据库后被调用
+    let db = openDatabase('webDB', '1.0', 'Test web database', 2 * 1024 * 1024, (database => {
+        alert(`${database} 创建成功!`);
+    }));
+
+    let Id = "testID";
+    let Log = "this is test log";
+    // 执行查询操作,并插入数据
+    db.transaction((tx) => {
+        tx.executeSql('create table if not exists logs (id unique, log)');
+        tx.executeSql('insert into logs (id, log) values (?, ?)', [Id, Log]);
+        tx.executeSql('insert into logs (id, log) values (2, "Log")');
+        document.querySelector('#status').innerHTML =  '<p>数据表已创建，且插入了两条数据。</p>';
+        alert(`数据表已创建，且插入了两条数据。`)
+    });
+
+    // 读取数据
+    db.transaction((tx) => {
+        tx.executeSql('select* from logs', [], (tx, result) => {
+            let len = result.rows.length;
+            let msg = "<p>查询记录条数: " + len + "</p>";
+            document.querySelector('#status').innerHTML += msg;
+            for (let i = 0; i < len; i++) {
+                alert(result.rows.item(i).log );
+            }
+        })
+    });
+
+    // 更新数据
+    let id = 2;
+    db.transaction((tx) => {
+        tx.executeSql('update logs set log=\'www.google.com\' where id=?', [id]);
+    })
+
+    // 删除数据
+    db.transaction((tx) => {
+        tx.executeSql("delete from logs where id='testID'");
+    })
+
+    // 读取数据
+    db.transaction((tx) => {
+        tx.executeSql('select* from logs', [], (tx, result) => {
+            let len = result.rows.length;
+            let msg = "<p>查询记录条数: " + len + "</p>";
+            document.querySelector('#status').innerHTML += msg;
+            for (let i = 0; i < len; i++) {
+                alert(result.rows.item(i).log );
+            }
+        })
+    });
+
+</script>
+
+</body>
+</html>

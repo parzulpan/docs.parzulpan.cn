@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue.js 初使用</title>
+<!--    方式1：CDN-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+<!--    方式2：下载文件，直接应用-->
+    <script src="../resources/vue.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+
+<div id="app">
+    {{message}} {{hello}}
+</div>
+
+<div id="app-2">
+    <span v-bind:title="message_date">
+        鼠标悬停几秒钟查看此处动态绑定的提示信息！
+    </span>
+</div>
+
+<script>
+
+    // 文本插值
+    let app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            hello: 'I am Pan.'
+        }
+    })
+
+    // 绑定元素attribute
+    // v-bind attribute 被称为指令。指令带有前缀 v-，以表示它们是 Vue 提供的特殊 attribute。
+    // 它们会在渲染的 DOM 上应用特殊的响应式行为。
+    // 意思是：“将这个元素节点的 title attribute 和 Vue 实例的 message_date property 保持一致”。
+    let app2 = new Vue({
+        el: '#app-2',
+        data: {
+            message_date: '页面加载于' + new Date().toLocaleString()
+        }
+    })
+
+
+</script>
+
+</body>
+</html>

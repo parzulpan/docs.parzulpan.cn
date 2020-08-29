@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS3 按钮</title>
+    <style>
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: #FFFFFF;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            transition-duration: 0.4s;
+            -webkit-transition-duration: 0.4s;
+        }
+
+        .button1 {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19)
+        }
+
+        .button2:hover {
+            box-shadow: 0 12px 16px rgba(0, 0, 0, 0.24), 0 17px 50px rgba(0, 0, 0, 0.19)
+        }
+
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .button3 {
+            background-color: #4CAF50;
+            border: 1px solid green;
+            color: #FFFFFF;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            float: left;
+        }
+        .button3:hover {
+            background-color: #3e8e41;
+        }
+
+        .button4 {
+            display: inline-block;
+            border-radius: 4px;
+            background-color: #f4511e;
+            border: none;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 28px;
+            padding: 20px;
+            width: 200px;
+            transition: all 0.5s;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button4 span {
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            transition: 0.5s;
+        }
+        .button4 span:after {
+            content: '»';
+            position: absolute;
+            opacity: 0;
+            top: 0;
+            right: -20px;
+            transition: 0.5s;
+        }
+        .button4:hover span {
+            padding-right: 25px;
+        }
+
+        .button4:hover span:after {
+            opacity: 1;
+            right: 0;
+        }
+
+        .button5 {
+            position: relative;
+            background-color: #4CAF50;
+            border: none;
+            font-size: 28px;
+            color: #FFFFFF;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            transition-duration: 0.4s;
+            -webkit-transition-duration: 0.4s;
+            text-decoration: none;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .button5:after {
+            content: "";
+            background: #90EE90;
+            display: block;
+            position: absolute;
+            padding-top: 300%;
+            padding-left: 350%;
+            margin-left: -20px!important;
+            margin-top: -120%;
+            opacity: 0;
+            transition: all 0.8s;
+        }
+        .button5:active:after {
+            padding: 0;
+            margin: 0;
+            opacity: 1;
+            transition: 0s;
+        }
+
+        .button6 {
+            display: inline-block;
+            padding: 15px 25px;
+            font-size: 24px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 9px #999;
+        }
+        .button6:hover {
+            background-color: #3e8e41
+        }
+        .button6:active {
+            background-color: #3e8e41;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+
+
+    </style>
+</head>
+<body>
+<h2>CSS 按钮</h2>
+<button>默认按钮</button>
+<a href="#" class="button">链接按钮</a>
+<button class="button">按钮</button>
+<input type="button" class="button" value="输入框按钮">
+
+<!--使用 box-shadow 属性来为按钮添加阴影-->
+<h2>按钮阴影</h2>
+<button class="button button1">阴影按钮</button>
+<button class="button button2">鼠标悬停后出现阴影</button>
+
+<!--用 opacity 属性为按钮添加透明度 (看起来类似 "disabled" 属性效果)-->
+<!--添加 cursor 属性并设置为 "not-allowed" 来设置一个禁用的图片-->
+<h2>禁用按钮</h2>
+<button class="button">正常按钮</button>
+<button class="button disabled">禁用按钮</button>
+
+<!--添加 float:left 来设置按钮组-->
+<h2>带边框的按钮组</h2>
+<button class="button3">BTN1</button>
+<button class="button3">BTN2</button>
+<button class="button3">BTN3</button>
+<button class="button3">BTN4</button>
+
+<br>
+<br>
+
+<!--按钮动画-->
+<h2>按钮动画-鼠标移动到按钮上后添加箭头标记</h2>
+<button class="button4" ><span>Hover </span></button>
+
+<h2>按钮动画-点击时添加"波纹"效果</h2>
+<button class="button5" >Click Me </button>
+
+<h2>按钮动画- "按压效果"</h2>
+<button class="button6" >Click Me </button>
+
+</body>
+</html>

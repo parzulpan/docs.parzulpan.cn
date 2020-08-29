@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS3 多媒体查询</title>
+    <style>
+        body {
+            background-color: pink;
+        }
+
+        @media screen and (min-width: 480px) {
+            body {
+                background-color: lightgreen;
+            }
+        }
+    </style>
+</head>
+<body>
+<!--CSS3 的多媒体查询继承了 CSS2 多媒体类型的所有思想： 取代了查找设备的类型，CSS3 根据设置自适应显示。-->
+<!--媒体查询可用于检测很多事情，例如：-->
+<!--viewport(视窗) 的宽度与高度-->
+<!--设备的宽度与高度-->
+<!--朝向 (智能手机横屏，竖屏) 。-->
+<!--分辨率-->
+
+<!--多媒体查询由多种媒体组成，可以包含一个或多个表达式，表达式根据条件是否成立返回 true 或 false。-->
+<!--@media not|only mediatype and (expressions) {-->
+<!--CSS 代码...;-->
+<!--}-->
+
+<!--not: not是用来排除掉某些特定的设备的，比如 @media not print（非打印设备）。-->
+<!--only: 用来定某种特别的媒体类型。对于支持Media Queries的移动设备来说，如果存在only关键字，移动设备的Web浏览器会忽略only关键字并直接根据后面的表达式应用样式文件。-->
+<!--对于不支持Media Queries的设备但能够读取Media Type类型的Web浏览器，遇到only关键字时会忽略这个样式文件。-->
+<!--all: 所有设备，这个应该经常看到。-->
+
+<h1>重置浏览器窗口查看效果！</h1>
+<p>如果媒体类型屏幕的可视窗口宽度小于 480 px ，背景颜色将改变。</p>
+
+
+
+
+
+</body>
+</html>

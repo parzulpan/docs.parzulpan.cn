@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS id和class选择器</title>
+    <style>
+        #para1
+        {
+            text-align: center;
+            color: red;
+        }
+        .para2
+        {
+            text-align: center;
+        }
+        p.para3
+        {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<!--id选择器可以为标有特定id的HTML元素指定特定的样式。HTML元素以id属性来设置id选择器，CSS中id选择器以"#"来定义。-->
+<p id="para1">这个段落受para1样式的影响。</p>
+<p>这个段落不受该样式的影响。</p>
+
+<!--class选择器用于描述一组元素的样式，class选择器有别于id选择器，class可以在多个元素中使用。-->
+<!--它在HTML中以class属性表示, 在CSS中，类选择器以一个点"."号显示-->
+<h1 class="para2">标题居中。</h1>
+<p class="para2">段落居中。</p>
+
+<h1 class="para3">这个标题不受影响。</h1>
+<p class="para3">这个段落居右对齐。</p>
+
+<!--除了上面两种选择器，还有元素选择器、属性选择器、包含选择器、子选择器和CSS3中新增的兄弟选择器-->
+
+</body>
+</html>

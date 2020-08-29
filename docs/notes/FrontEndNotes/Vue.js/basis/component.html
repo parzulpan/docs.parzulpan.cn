@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue.js 组件</title>
+    <script src="../resources/vue.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+
+<div id="app-7">
+    <ol>
+        <grocery-item
+            v-for="item in groceryList"
+            v-bind:grocery="item"
+            v-bind:key="item.id"
+        ></grocery-item>
+    </ol>
+</div>
+
+<script>
+    // 在 Vue 里，一个组件本质上是一个拥有预定义选项的一个 Vue 实例。
+    // 组件的定义：
+    // Vue.component('grocery-item', {
+    //     // grocery-item 组件现在接受一个
+    //     // "prop"，类似于一个自定义 attribute。
+    //     // 这个 prop 名为 grocery。
+    //     props: ['grocery'],
+    //     template: '<li>{{ grocery.text }}</li>'
+    // })
+
+    // 使用 v-bind 指令将待办项传到循环输出的每个组件中
+    Vue.component('grocery-item', {
+        props: ['grocery'],
+        template: '<li>{{ grocery.text }}</li>'
+    })
+
+    let app7 = new Vue({
+        el: '#app-7',
+        data: {
+            groceryList: [
+                {id: 0, text: '蔬菜'},
+                {id: 1, text: '水果'},
+                {id: 0, text: '肉类'},
+            ]
+        }
+    })
+
+</script>
+
+</body>
+</html>

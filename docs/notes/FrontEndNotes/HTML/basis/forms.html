@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML 表单</title>
+</head>
+<body>
+<!--表单使用表单标签 <form> 来设置-->
+
+<!--文本域(Text Fields)-->
+<form>
+    <label>
+        firstName:
+        <input type="text" name="firstName">
+    </label><br/>
+    <label>
+        lastName:
+        <input type="text" name="lastName">
+    </label><br/>
+</form>
+<hr>
+
+<!--密码字段-->
+<form>
+    <label>
+        passWord:
+        <input type="password" name="PassWord">
+    </label><br/>
+</form>
+<hr>
+
+<!--单选按钮(Radio Buttons)-->
+<form>
+    <label>
+        <input type="radio" name="sex" value="male">
+    </label>Male<br/>
+    <label>
+        <input type="radio" name="sex" value="female">
+    </label>Female<br/>
+</form>
+<hr>
+
+<!--复选框(Checkboxes)-->
+<form>
+    <label>
+        <input type="checkbox" name="phone" value="huawei">
+    </label>I have a Huawei<br/>
+    <label>
+        <input type="checkbox" name="phone" value="xiaomi">
+    </label>I have a Xiaomi<br/>
+</form>
+<hr>
+
+<!--提交按钮(submit button)-->
+<!--当用户点击确认按钮时，表单的内容会被传送到另一个文件。表单的动作属性定义了目的文件的文件名。-->
+<!--由动作属性定义的这个文件通常会对接收到的输入数据进行相关的处理-->
+<form name="input" action="./layouts.html" method="get">
+    <label>
+        userName:
+        <input type="text" name="userName">
+    </label>
+    <input type="submit" value="Submit">
+</form>
+
+
+
+</body>
+</html>

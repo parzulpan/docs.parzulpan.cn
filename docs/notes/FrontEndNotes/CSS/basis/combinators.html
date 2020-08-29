@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS 组合选择符</title>
+    <style>
+        div p {
+            background-color: yellow;
+        }
+        div > h2 {
+            background-color: red;
+        }
+        div + h1 {
+            background-color: lime;
+        }
+        div ~ h5{
+            background-color: pink;
+        }
+
+    </style>
+</head>
+<body>
+<!--在 CSS3 中包含了四种组合方式:-->
+<!--1. 后代选择器(以空格分隔)-->
+<!--2. 子元素选择器(以大于号分隔)-->
+<!--3. 相邻兄弟选择器(以加号分隔)-->
+<!--4. 普通兄弟选择器(以破折号分隔)-->
+
+<!--后代选择器，它用于选取某元素的后代元素-->
+<div>
+    <p>段落 1。 在 div 中。</p>
+    <p>段落 2。 在 div 中。</p>
+</div>
+<p>段落 3。不在 div 中。</p>
+<p>段落 4。不在 div 中。</p>
+<hr>
+
+<!--子元素选择器，它只能选择作为某元素子元素的元素-->
+<div>
+    <h2>My name is Donald</h2>
+    <h3>I live in Duck.</h3>
+</div>
+<div>
+    <span><h2>I will not be styled.</h2></span>
+</div>
+<hr>
+
+<!--相邻兄弟选择器，它可选择紧接在另一元素后的元素，且二者有相同父元素。-->
+<div>
+    <h1>DIV 内部标题</h1>
+    <h1>DIV 内部段落。</h1>
+</div>
+<h1>DIV 之后的第一个 h1 元素。</h1>
+<h1>DIV 之后的第二个 h1 元素。</h1>
+<hr>
+
+<!--后续兄弟选择器，它选取所有指定元素之后的相邻兄弟元素-->
+<h5>之前段落，不会添加背景颜色。</h5>
+<div>
+    <h5>段落 1。 在 div 中。</h5>
+    <h5>段落 2。 在 div 中。</h5>
+</div>
+<h5>段落 3。不在 div 中。</h5>
+<h5>段落 4。不在 div 中。</h5>
+
+
+</body>
+</html>

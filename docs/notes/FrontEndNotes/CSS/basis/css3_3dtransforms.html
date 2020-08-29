@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS3 3D转换</title>
+    <style>
+        div {
+            width: 100px;
+            height: 75px;
+            background-color: red;
+            border: 1px solid black;
+        }
+
+        div#div1 {
+            transform: rotateX(120deg);
+            -webkit-transform: rotateX(120deg);
+        }
+
+        div#div2 {
+            transform: rotateY(130deg);
+            -webkit-transform: rotateY(130deg);
+        }
+    </style>
+</head>
+<body>
+<!--CSS3允许您使用 3D 转换来对元素进行格式化-->
+
+<!--rotateX()方法，围绕其在一个给定度数X轴旋转的元素-->
+<div>Hello. This is a DIV element.</div>
+<div id="div1">Hello. This is a DIV element.</div>
+
+<!--rotateY()方法，围绕其在一个给定度数Y轴旋转的元素-->
+<div id="div2">Hello. This is a DIV element.</div>
+
+
+<!--属性	                    描述-->
+<!--transform	            向元素应用 2D 或 3D 转换。	-->
+<!--transform-origin	    允许你改变被转换元素的位置。	-->
+<!--transform-style	        规定被嵌套元素如何在 3D 空间中显示。-->
+<!--perspective	            规定 3D 元素的透视效果。-->
+<!--perspective-origin	    规定 3D 元素的底部位置。-->
+<!--backface-visibility	    定义元素在不面对屏幕时是否可见。-->
+
+<!--函数	                                            描述-->
+<!--matrix3d(n,n,n,n,n,n, n,n,n,n,n,n,n,n,n,n)	    定义 3D 转换，使用 16 个值的 4x4 矩阵。-->
+<!--translate3d(x,y,z)	                            定义 3D 转化。-->
+<!--translateX(x)	                                定义 3D 转化，仅使用用于 X 轴的值。-->
+<!--translateY(y)	                                定义 3D 转化，仅使用用于 Y 轴的值。-->
+<!--translateZ(z)	                                定义 3D 转化，仅使用用于 Z 轴的值。-->
+<!--scale3d(x,y,z)	                                定义 3D 缩放转换。-->
+<!--scaleX(x)	                                    定义 3D 缩放转换，通过给定一个 X 轴的值。-->
+<!--scaleY(y)	                                    定义 3D 缩放转换，通过给定一个 Y 轴的值。-->
+<!--scaleZ(z)	                                    定义 3D 缩放转换，通过给定一个 Z 轴的值。-->
+<!--rotate3d(x,y,z,angle)	                        定义 3D 旋转。-->
+<!--rotateX(angle)	                                定义沿 X 轴的 3D 旋转。-->
+<!--rotateY(angle)	                                定义沿 Y 轴的 3D 旋转。-->
+<!--rotateZ(angle)	                                定义沿 Z 轴的 3D 旋转。-->
+<!--perspective(n)	                                定义 3D 转换元素的透视视图。-->
+
+
+</body>
+</html>

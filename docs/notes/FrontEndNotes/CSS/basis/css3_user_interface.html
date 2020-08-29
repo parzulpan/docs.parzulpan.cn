@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS3 用户界面</title>
+    <style>
+        div.resize_t {
+            border: 2px solid;
+            padding: 10px 40px;
+            width: 300px;
+            resize: both;
+            overflow: auto;
+        }
+
+        div.box_sizing_t {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            width: 50%;
+            border:1em solid red;
+            float: left;
+        }
+
+        div.outline_offset_t {
+            margin:20px;
+            width:150px;
+            padding:10px;
+            height:70px;
+            border:2px solid black;
+            outline:2px solid red;
+            outline-offset:15px;
+        }
+
+    </style>
+</head>
+<body>
+<!--CSS3 中, 增加了一些新的用户界面特性来调整元素尺寸，框尺寸和外边框-->
+<!--以下的用户界面属性：-->
+<!--resize-->
+<!--box-sizing-->
+<!--outline-offset-->
+
+<!--resize属性指定一个元素是否应该由用户去调整大小-->
+<div class="resize_t">调整属性指定一个元素是否由用户可调整大小的。</div>
+
+<hr>
+
+<!--box-sizing 属性允许您以确切的方式定义适应某个区域的具体内容-->
+<div class="box_sizing_t">这个 div 占据了左边的一半。</div>
+<div class="box_sizing_t">这个 div 占据了右边的一半。</div>
+
+<hr>
+
+<!--outline-offset 属性对轮廓进行偏移，并在超出边框边缘的位置绘制轮廓。-->
+<!--轮廓与边框有两点不同：-->
+<!--1. 轮廓不占用空间-->
+<!--2. 轮廓可能是非矩形-->
+<div class="outline_offset_t">这个 div有一个轮廓边界15 px边境外的边缘。</div>
+
+
+<!--属性	            说明-->
+<!--appearance	    允许您使一个元素的外观像一个标准的用户界面元素-->
+<!--box-sizing	    允许你以适应区域而用某种方式定义某些元素-->
+<!--icon	        为创作者提供了将元素设置为图标等价物的能力-->
+<!--nav-down	    指定在何处使用箭头向下导航键时进行导航-->
+<!--nav-index	    指定一个元素的Tab的顺序-->
+<!--nav-left	    指定在何处使用左侧的箭头导航键进行导航-->
+<!--nav-right	    指定在何处使用右侧的箭头导航键进行导航-->
+<!--nav-up	        指定在何处使用箭头向上导航键时进行导航-->
+<!--outline-offset	外轮廓修饰并绘制超出边框的边缘-->
+<!--resize	        指定一个元素是否是由用户调整大小-->
+
+</body>
+</html>

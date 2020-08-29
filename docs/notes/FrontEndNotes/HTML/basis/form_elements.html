@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5 表单元素</title>
+</head>
+<body>
+<!--datalist元素规定输入域的选项列表，它规定 form 或 input 域应该拥有自动完成功能。-->
+<!--当用户在自动完成域中开始输入时，浏览器应该在该域中显示填写的选项-->
+<label>
+    <input list="browsers">
+</label>
+<datalist id="browsers">
+    <option value="Internet Explorer">
+    <option value="Firefox">
+    <option value="Chrome">
+    <option value="Opera">
+    <option value="Safari">
+</datalist>
+<br/>
+
+<!--keygen元素是提供一种验证用户的可靠方法，用于表单的密钥对生成器字段-->
+<!--当提交表单时，会生成两个键，一个是私钥，一个公钥。私钥存储于客户端，公钥则被发送到服务器，公钥可用于之后验证用户的客户端证书-->
+<form action="" method="get">
+    <label>
+        用户名: <input type="text" name="userName">
+    </label>
+    加密: <keygen name="security"></keygen>
+    <input type="submit">
+</form>
+<br/>
+
+<!--output元素用于不同类型的输出-->
+<form oninput="x.value=parseInt(a.value)+parseInt(b.value)">0
+    <label for="a"></label><input type="range" id="a" value="50">100 +
+    <label for="b"></label><input type="number" id="b" value="50">=
+    <output name="x" for="a b"></output>
+
+</form>
+
+
+</body>
+</html>
