@@ -1,0 +1,69 @@
+树：
+// LeetCode$!{question.frontendQuestionId} ${question.title} ${question.titleSlug}
+
+${question.content}
+
+// pan: test header
+//include "base-tree.h"
+
+${question.code}
+
+// pan: test main
+int main() {
+
+    // test case
+    vector<int> levelOrderVector{1,2,3,4,5};
+
+    BaseTree baseTree;
+
+    TreeNode* root = baseTree.createTreeFromLevelOrderVector(levelOrderVector, levelOrderVector.size());
+
+    Solution solution;
+    int temp = solution.findTilt(root);
+    cout << temp << " ";
+
+    return 0;
+}
+
+/**
+ * KnowledgePoint:
+ *
+ * T(n) =
+ *
+ * O(n) =
+ *
+ * Summary:
+ */
+
+
+动态规划：
+// LeetCode$!{question.frontendQuestionId} ${question.title} ${question.titleSlug}
+
+${question.content}
+
+// pan: test header
+//include "base-dp.h"
+
+${question.code}
+
+// pan: test main
+int main() {
+
+    // test case
+
+    Solution solution;
+    int temp = solution.func();
+    cout << temp << " ";
+
+    return 0;
+}
+
+/**
+ * KnowledgePoint:
+ *
+ * T(n) =
+ *
+ * O(n) =
+ *
+ * Summary:
+ */

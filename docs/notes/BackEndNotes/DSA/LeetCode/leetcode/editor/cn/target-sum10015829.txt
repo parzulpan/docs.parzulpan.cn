@@ -1,0 +1,27 @@
+//章节 - 队列和栈    
+//四、栈和深度优先搜索
+//3.目标和
+/*
+算法思想：
+    使用递归，也就DFS,只是用的系统栈。我们从第一个数字，调用递归函数，在递归函数中，分别对目标值进行加上当前数字调用递归，和减去当前数字调用递归，这样会涵盖所有情况，并且当所有数字遍历完成后，我们看若目标值为0了，则结果res自增1，
+*/
+//算法实现：
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+        int res = 0;
+        helper(nums, S, 0, res);
+        return res;
+    }
+    void helper(vector<int>& nums, int S, int start, int& res) {
+        if (start >= nums.size()) {
+            if (S == 0) 
+                ++res;
+            return;
+        }
+        helper(nums, S - nums[start], start + 1, res);
+        helper(nums, S + nums[start], start + 1, res);
+    }
+};
+//runtime:836 ms
+//memory:N/A
