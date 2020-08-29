@@ -1,6 +1,0 @@
-[submodule "/home/parzulpan/Pro/docs.parzulpan.cn/docs/notes/BackEndNotes"]
-	path = /home/parzulpan/Pro/docs.parzulpan.cn/docs/notes/BackEndNotes
-	url = git@github.com:parzulpan/BackEndNotes.git
-[submodule "/home/parzulpan/Pro/docs.parzulpan.cn/docs/notes/FrontEndNotes"]
-	path = /home/parzulpan/Pro/docs.parzulpan.cn/docs/notes/FrontEndNotes
-	url = git@github.com:parzulpan/FrontEndNotes.git
