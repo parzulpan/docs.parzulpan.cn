@@ -1,8 +1,8 @@
-* 文档
-  * [后端开发笔记](_nav/BackEndNotes.md)
-  * [前端开发笔记](_nav/FrontEndNotes.md)
+* 笔记
+  * [后端开发](notes/BackEndNotes.md)
+  * [前端开发](notes/FrontEndNotes.md)
 * 项目
-  * [网络直播聚合平台](_nav/RealLive.md)
+  * [待更新](projects/RealLive.md)
 * 关于
-  * [简历](_nav/Resume.md)
-  * [趣事](_nav/Anecdote.md)
+  * [简历](about/Resume.md)
+  * [趣事](about/Anecdote.md)
