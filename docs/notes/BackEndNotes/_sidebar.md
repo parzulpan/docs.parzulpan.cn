@@ -44,6 +44,10 @@
 * **Go**
 * **Python**
 * **算法**
+  * [数据结构](/notes/BackEndNotes/DSA/DataStructure.md)
+  * [经典算法](/notes/BackEndNotes/DSA/ClassicalAlgorithm.md)
+  * [算法设计](/notes/BackEndNotes/DSA/AlgorithmDesign.md)
+  * [高频面试题](/notes/BackEndNotes/DSA/Interview.md)
 * **系统**
 * **网络**
 * **数据库**

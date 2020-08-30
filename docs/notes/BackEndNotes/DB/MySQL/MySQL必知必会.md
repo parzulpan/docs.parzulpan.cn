@@ -94,13 +94,29 @@ use learnDB
 
 ### 了解数据库和表
 
-`show databases;` 返回可用数据库的一个列表。包含在这个列表中的可能是MySQL内部使用的数据库。
+```sql
+show databases;
+```
 
-`show tables;` 返回当前选择的数据库内可用表的列表。
+返回可用数据库的一个列表。包含在这个列表中的可能是MySQL内部使用的数据库。
 
-`show columns from table;` 要求给出一个表名，它对每个字段返回一行，行中包含字段名、数据类型、是否允许NULL、键信息、默认值以及其他信息。
+```sql
+show tables;
+```
 
-`describe table;` 是`show columns from table;`的一种快捷形式。
+返回当前选择的数据库内可用表的列表。
+
+```sql
+show columns from table;
+```
+
+要求给出一个表名，它对每个字段返回一行，行中包含字段名、数据类型、是否允许NULL、键信息、默认值以及其他信息。
+
+```sql
+describe table;
+```
+
+它是`show columns from table;`的一种快捷形式。
 
 **自动增量**：某些表列需要唯一值。在每个行添加到表中时，MySQL可以自动地为每个行分配下一个可用编号，不用在添加一行时手动分配唯一值（这样做必须记住最后一次使用的值）。这个功能就是所谓的自动增量。
 
@@ -119,11 +135,21 @@ use learnDB
 
 ### 检索单个列
 
-`select prod_name from products;` 从products表中检索一个名为prod_name的列。
+```sql
+select prod_name
+from products;
+```
+
+从products表中检索一个名为prod_name的列。
 
 ### 检索多个列
 
-`select prod_id, prod_name, prod_price from products;` 从products表中检索一个名为prod_id、prod_name、prod_price的列。
+```sql
+select prod_id, prod_name, prod_price 
+from products;
+```
+
+从products表中检索一个名为prod_id、prod_name、prod_price的列。
 
 ### 检索所有列
 
@@ -263,7 +289,7 @@ MySQL支持使用NOT对IN、BETWEEN和EXISTS子句取反，这与多数其他DBM
 
 操作符何时不是操作符？答案是在它作为谓词（predicate）时。**从技术上说，LIKE是谓词而不是操作符。**
 
-#### 百分号（%）通配符
+#### 百分号通配符
 
 在搜索串中，%表示任何字符出现任意次数。
 
@@ -276,7 +302,7 @@ MySQL支持使用NOT对IN、BETWEEN和EXISTS子句取反，这与多数其他DBM
 
 虽然似乎%通配符可以匹配任何东西，但有一个**例外**，即NULL。即使是WHERE prod_name LIKE '%'也不能匹配用值NULL作为产品名的行。
 
-#### 下划线(_)通配符
+#### 下划线通配符
 
 下划线只匹配单个字符而不是多个字符。
 
