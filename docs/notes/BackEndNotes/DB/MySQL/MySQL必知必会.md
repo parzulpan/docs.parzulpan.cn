@@ -145,7 +145,7 @@ from products;
 ### 检索多个列
 
 ```sql
-select prod_id, prod_name, prod_price 
+select prod_id, prod_name, prod_price
 from products;
 ```
 
@@ -153,23 +153,49 @@ from products;
 
 ### 检索所有列
 
-`select * from products;` 使用通配符有一个大优点。由于不明确指定列名（因为星号检索每个列），所以能检索出名字未知的列。
+```sql
+select *
+from products;
+```
+
+使用通配符有一个大优点。由于不明确指定列名（因为星号检索每个列），所以能检索出名字未知的列。
 
 ### 检索不同的行
 
-`select distinct vend_id from products;` 只返回不同（唯一）的vend_id行，如果使用DISTINCT关键字，它必须直接放在列名的前面。
+```sql
+select distinct vend_id
+from products;
+```
+
+只返回不同（唯一）的vend_id行，如果使用DISTINCT关键字，它必须直接放在列名的前面。
 
 **注意**：不能部分使用DISTINCT。DISTINCT关键字应用于所有列而不仅是前置它的列。如果给出 `SELECT DISTINCT vend_id, prod_price`，除非指定的两个列都不同，否则所有行都将被检索出来。
 
 ### 限制结果
 
-`select distinct vend_id, prod_price from products limit 5;` LIMIT 5指示MySQL返回不多于5行。
+```sql
+select distinct vend_id, prod_price
+from products
+limit 5;
+```
 
-`select prod_name from products limit 4 offset 3;` 意为从行3开始取4行，等效于 `select prod_name from products limit 3, 4;`
+LIMIT 5指示MySQL返回不多于5行。
+
+```sql
+select prod_name
+from products
+limit 4 offset 3;
+```
+
+意为从行3开始取4行，等效于 `select prod_name from products limit 3, 4;`
 
 ### 使用完全限定的表名
 
-`select products.prod_name from products limit 4 offset 3;`
+```sql
+select products.prod_name
+from products
+limit 4 offset 3;
+```
 
 ## 排序检索数据
 
@@ -179,17 +205,35 @@ from products;
 
 > **子句（clause）：SQL语句由子句构成，有些子句是必需的，而有的是可选的。一个子句通常由一个关键字和所提供的数据组成。**
 
-`select prod_name from products order by prod_name;` 指示MySQL对prod_name列以字母顺序排序数据。
+```sql
+select prod_name
+from products
+order by prod_name;
+```
+
+指示MySQL对prod_name列以字母顺序排序数据。
 
 ### 按多个列排序
 
-`select prod_id, prod_price, prod_name from products order by prod_price, prod_name;` 检索3个列，并按其中两个列对结果进行排序——首先按价格，然后再按名称排序。
+```sql
+select prod_id, prod_price, prod_name
+from products
+order by prod_price, prod_name;
+```
+
+检索3个列，并按其中两个列对结果进行排序——首先按价格，然后再按名称排序。
 
 ### 指定排序方向
 
 数据排序默认为升序排序，为了进行降序排序，必须指定DESC关键字。
 
-`select prod_id, prod_price, prod_name from products order by prod_price desc`; 按价格以降序排序产品。
+```sql
+select prod_id, prod_price, prod_name
+from products
+order by prod_price desc;
+```
+
+按价格以降序排序产品。
 
 **注意**：DESC关键字只应用到直接位于其前面的列名。如果想在多个列上进行降序排序，必须对每个列指定DESC关键字。
 
@@ -201,7 +245,13 @@ from products;
 
 只检索所需数据需要指定搜索条件（search criteria），搜索条件也称为过滤条件（filter condition）。WHERE子句在表名（FROM子句）之后给出。
 
-`select prod_id, prod_price, prod_name from products where prod_price = 2.50;` 从products表中检索两个列，但不返回所有行，只返回prod_price值为2.50的行，
+```sql
+select prod_id, prod_price, prod_name
+from products
+where prod_price = 2.50;
+```
+
+从products表中检索两个列，但不返回所有行，只返回prod_price值为2.50的行，
 
 **注意**：在同时使用ORDER BY和WHERE子句时，应该让ORDER BY位于WHERE之后，否则将会产生错误。
 
@@ -220,7 +270,13 @@ MySQL支持的所有条件操作符：
 | `>=` | 大于等于 |
 | `BETWEEN` | 在指定的两个值之间 |
 
-`select prod_id, prod_price, prod_name from products where prod_price between 5 and 10;` 它检索价格在5美元和10美元之间的所有产品。BETWEEN匹配范围中所有的值，包括指定的开始值和结束值。
+```sql
+select prod_id, prod_price, prod_name
+from products
+where prod_price between 5 and 10;
+```
+
+它检索价格在5美元和10美元之间的所有产品。BETWEEN匹配范围中所有的值，包括指定的开始值和结束值。
 
 ### 空值检查
 
@@ -228,7 +284,11 @@ MySQL支持的所有条件操作符：
 
 SELECT语句有一个特殊的WHERE子句，可用来检查具有NULL值的列。这个WHERE子句就是IS NULL子句。
 
-`select cust_id from customers where cust_email is null;`
+```sql
+select cust_id
+from customers
+where cust_email is null;
+```
 
 **注意**：在通过过滤选择出不具有特定值的行时，你可能希望返回具有NULL值的行。但是，不行。因为未知具有特殊的含义，数据库不知道它们是否匹配，所以在匹配过滤
 或不匹配过滤时不返回它们。因此，**在过滤数据时，一定要验证返回数据中确实给出了被过滤列具有NULL的行。**
@@ -243,11 +303,22 @@ SELECT语句有一个特殊的WHERE子句，可用来检查具有NULL值的列�
 
 > **AND：用在WHERE子句中的关键字，用来指示检索满足所有给定条件的行。**
 
-`select vend_id, prod_price from products where vend_id = 1003 and prod_price <= 10;` 此SQL语句检索由供应商1003制造且价格小于等于10美元的所有产品的名称和价格。
+```sql
+select vend_id, prod_price
+from products
+where vend_id = 1003 and prod_price <= 10;
+```
+
+此SQL语句检索由供应商1003制造且价格小于等于10美元的所有产品的名称和价格。
 
 > **OR：WHERE子句中使用的关键字，用来表示检索匹配任一给定条件的行。**
 
-`select vend_id, prod_price from products where vend_id = 1002 or vend_id = 1003;` 此SQL语句检索由任一个指定供应商制造的所有产品的产品名和价格。
+```sql
+select vend_id, prod_price
+from products where vend_id = 1002 or vend_id = 1003;
+```
+
+此SQL语句检索由任一个指定供应商制造的所有产品的产品名和价格。
 
 **注意**：任何时候使用具有AND和OR操作符的WHERE子句，都应该使用圆括号明确地分组操作符。不要过分依赖默认计算次序，即使它确实是你想要的东西也是如此。使用圆括号没有什么坏处，它能消除歧义。
 
@@ -257,7 +328,13 @@ IN操作符用来指定条件范围，范围中的每个条件都可以进行匹
 
 > **IN：WHERE子句中用来指定要匹配值的清单的关键字，功能与OR相当。**
 
-`select prod_name, prod_price from products where vend_id in (1002, 1003) order by prod_name;` 检索供应商1002和1003制造的所有产品。
+```sql
+select prod_name, prod_price
+from products
+where vend_id in (1002, 1003) order by prod_name;
+```
+
+检索供应商1002和1003制造的所有产品。
 
 为什么要使用IN操作符？它有如下优点：
 
@@ -273,7 +350,13 @@ WHERE子句中的NOT操作符有且只有一个功能，那就是否定它之后
 
 > **NOT：WHERE子句中用来否定后跟条件的关键字。**
 
-`select prod_name, prod_price from products where vend_id not in (1002, 1003) order by prod_name;` 检索供应商1002和1003之外制造的所有产品。
+```sql
+select prod_name, prod_price
+from products
+where vend_id not in (1002, 1003) order by prod_name;
+```
+
+检索供应商1002和1003之外制造的所有产品。
 
 MySQL支持使用NOT对IN、BETWEEN和EXISTS子句取反，这与多数其他DBMS允许使用NOT对各种条件取反有很大的差别。
 
@@ -293,8 +376,13 @@ MySQL支持使用NOT对IN、BETWEEN和EXISTS子句取反，这与多数其他DBM
 
 在搜索串中，%表示任何字符出现任意次数。
 
-`select prod_id, prod_name from products where prod_name like 'jet%';` 将检索任
-意以jet起头的prod_name。
+```sql
+select prod_id, prod_name
+from products
+where prod_name like 'jet%';
+```
+
+将检索任意以jet起头的prod_name。
 
 **注意**：%代表搜索模式中给定位置的0个、1个或多个字符。
 
@@ -306,7 +394,11 @@ MySQL支持使用NOT对IN、BETWEEN和EXISTS子句取反，这与多数其他DBM
 
 下划线只匹配单个字符而不是多个字符。
 
-`select prod_id, prod_name from products where prod_name like '_ ton anvil';`
+```sql
+select prod_id, prod_name
+from products
+where prod_name like '_ ton anvil';
+```
 
 ### 使用通配符的技巧
 
@@ -328,9 +420,21 @@ MySQL仅支持多数正则表达式实现的一个很小的子集。
 
 #### 基本字符匹配
 
-`select prod_name from products where prod_name regexp '1000' order by prod_name;` 检索列prod_name包含文本1000的所有行。
+```sql
+select prod_name
+from products
+where prod_name regexp '1000' order by prod_name;
+```
 
-`select prod_name from products where prod_name regexp '.000' order by prod_name;` `.`是正则表达式语言中一个特殊的字符。它表示匹配任意一个字符，因此，1000和2000等都匹配且返回。
+检索列prod_name包含文本1000的所有行。
+
+```sql
+select prod_name
+from products
+where prod_name regexp '.000' order by prod_name;
+```
+
+`.`是正则表达式语言中一个特殊的字符。它表示匹配任意一个字符，因此，1000和2000等都匹配且返回。
 
 LIKE和REGEXP的一个**重要差别**：
 
@@ -342,8 +446,7 @@ order by prod_name;
 
 select prod_name
 from products
-where prod_name regexp '1000'
-order by prod_name;
+where prod_name regexp '1000' order by prod_name;
 ```
 
 执行上述两条语句，会发现第一条语句不返回数据，而第二条语句返回一行。为什么？
@@ -355,17 +458,35 @@ MySQL中的正则表达式匹配（自版本3.23.4后）不区分大小写，即
 
 #### 进行OR匹配
 
-`select prod_name from products where prod_name regexp '1000|2000' order by prod_name;` `|`为正则表达式的OR操作符。它表示匹配其中之一，因此1000和2000都匹配并返回。
+```sql
+select prod_name
+from products
+where prod_name regexp '1000|2000' order by prod_name;
+```
+
+`|`为正则表达式的OR操作符。它表示匹配其中之一，因此1000和2000都匹配并返回。
 
 使用|从功能上类似于在SELECT语句中使用OR语句，多个OR条件可并入单个正则表达式。
 
 #### 匹配几个字符之一
 
-`select prod_name from products where prod_name regexp '[123] Ton' order by prod_name;` `[123]`定义一组字符，它的意思是匹配1或2或3，因此，1 ton和2 ton都匹配且返回（没有3 ton）。
+```sql
+select prod_name
+from products
+where prod_name regexp '[123] Ton' order by prod_name;
+```
+
+`[123]`定义一组字符，它的意思是匹配1或2或3，因此，1 ton和2 ton都匹配且返回（没有3 ton）。
 
 #### 匹配范围
 
-`select prod_name from products where prod_name regexp '[1-5] Ton' order by prod_name;` `[1-5]`定义了一个范围，这个表达式意思是匹配1到5，因此返回3个匹配行。
+```sql
+select prod_name
+from products
+where prod_name regexp '[1-5] Ton' order by prod_name;
+```
+
+`[1-5]`定义了一个范围，这个表达式意思是匹配1到5，因此返回3个匹配行。
 
 #### 匹配特殊字符
 
