@@ -40,9 +40,27 @@
     * [第七章 模板与泛型编程](/notes/BackEndNotes/Cpp/EffectiveC++/ch07/ch07.md)
     * [第八章 定制new和delete](/notes/BackEndNotes/Cpp/EffectiveC++/ch08/ch08.md)
     * [杂项讨论](/notes/BackEndNotes/Cpp/EffectiveC++/ch09/ch09.md)
-  * **高频面试题(待更新)**
+  * **高频面试题**
 * **Go**
 * **Python**
+* **算法**
+* **系统**
+* **网络**
+* **数据库**
+  * **MySQL**
+    * **基础**
+      * [阅读前必看](/notes/BackEndNotes/DB/MySQL/README.md)
+      * [MySQL必知必会](/notes/BackEndNotes/DB/MySQL/MySQL必知必会.md)
+    * **进阶**
+    * **高频面试题**
+  * **Redis**
+    * **基础**
+    * **进阶**
+    * **高频面试题**
+  * **MangoDB**
+    * **基础**
+    * **进阶**
+    * **高频面试题**
 * **设计模式**
   * **基础**
     * [阅读前必看](/notes/BackEndNotes/DesignPatterns/README.md)
@@ -76,4 +94,7 @@
       * [模板方法模式](/notes/BackEndNotes/DesignPatterns/TemplateMethod/TemplateMethod.md)
       * [访问者模式](/notes/BackEndNotes/DesignPatterns/VisitorPattern/VisitorPattern.md)
   * **进阶(待更新)**
-  * **高频面试题(待更新)**
+  * **高频面试题**
+* **消息队列**
+* **系统设计**
+* **面试相关**
