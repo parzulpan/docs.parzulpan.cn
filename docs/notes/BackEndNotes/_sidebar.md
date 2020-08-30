@@ -49,7 +49,6 @@
 * **数据库**
   * **MySQL**
     * **基础**
-      * [阅读前必看](/notes/BackEndNotes/DB/MySQL/README.md)
       * [MySQL必知必会](/notes/BackEndNotes/DB/MySQL/MySQL必知必会.md)
     * **进阶**
     * **高频面试题**
