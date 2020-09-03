@@ -59,7 +59,7 @@
       * [高性能MySQL（二）](/notes/BackEndNotes/DB/MySQL/高性能MySQL（二）.md)
       * [MySQL技术内幕：InnoDB存储引擎](/notes/BackEndNotes/DB/MySQL/MySQL技术内幕：InnoDB存储引擎.md)
     * **高频面试题**
-      * [LeetCode](/notes/BackEndNotes/DB/MySQL/LeetCode.md)
+      * [LeetCode 数据库模块](/notes/BackEndNotes/DB/MySQL/LeetCode.md)
   * **Redis**
     * **基础**
     * **进阶**

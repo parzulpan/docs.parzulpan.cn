@@ -383,7 +383,7 @@ FROM Scores;
 
 因为窗口函数是对`where`或者`group by`子句处理后的结果进行操作，所以**窗口函数原则上只能写在select子句中**。
 
-**RANK()**：
+**`RANK()`**：
 
 ```sql
 SELECT * FROM Scores;
@@ -417,7 +417,7 @@ FROM Scores;
 +------+-------+------+
 ```
 
-**DENSE_RANK()**：
+**`DENSE_RANK()`**：
 
 ```sql
 SELECT * FROM Scores;
@@ -451,7 +451,7 @@ FROM Scores;
 +------+-------+------------+
 ```
 
-**ROW_NUMBER()**：
+**`ROW_NUMBER()`**：
 
 ```sql
 SELECT * FROM Scores;
