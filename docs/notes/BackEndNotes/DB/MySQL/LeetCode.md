@@ -213,7 +213,7 @@ MySQL中 `ISNULL`、`IFNULL`、`NULLIF` 的用法：
 
 ### `IFNULL` 函数解法
 
-**分析**：解法同176. 第二高的薪水。
+**分析**：单表不分组 `TOPN` 问题。解法同176. 第二高的薪水。
 
 ```sql
 CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
@@ -707,87 +707,335 @@ FROM EmployeeA AS a INNER JOIN EmployeeA AS b ON a.ManagerId = b.Id AND a.Salary
 ### 题目描述
 
 ```
+编写一个 SQL 查询，查找 Person 表中所有重复的电子邮箱。
 
+示例：
+
++----+---------+
+| Id | Email   |
++----+---------+
+| 1  | a@b.com |
+| 2  | c@d.com |
+| 3  | a@b.com |
++----+---------+
+根据以上输入，你的查询应返回以下结果：
+
++---------+
+| Email   |
++---------+
+| a@b.com |
++---------+
+说明：所有电子邮箱都是小写字母。
 ```
 
 ```sql
 # 表架构
-
-
+Create table If Not Exists Person (Id int, Email varchar(255));
+Truncate table Person;
+insert into Person (Id, Email) values ('1', 'a@b.com');
+insert into Person (Id, Email) values ('2', 'c@d.com');
+insert into Person (Id, Email) values ('3', 'a@b.com');
 ```
 
-### 解法
+### `GROUP BY` 和临时表解法
 
-**分析**：
+**分析**：看到“找重复”的关键字眼，一般要用 `group by` 分组，因为 `where` 不能过滤分组，可以用一个临时表保存分组结果然后过滤。
+
+```sql
+select Email
+from (
+    select Email, count(Email) as num
+    from Person182
+    group by Email
+ ) as tempTable
+where num > 1;
+```
+
+### `GROUP BY` 和 `HAVING` 解法
+
+**分析**：`where` 过滤行，而 `having` 可以过滤分组。
+
+```sql
+select Email
+from Person182
+group by Email
+having count(Email) > 1;
+```
 
 ### 总结
+
+* 必须要记住的优先顺序：`where` > `group by` > `having` > `order by`
+
+* `where` 子句无法与聚合函数一起使用。
+
+* 找出重复出现 `n` 次的数据，只需要改变 `having` 语句中的条件即可
+
+```sql
+select 列名
+from 表名
+group by 列名
+having count(列名) > n;
+```
 
 ## 183. 从不订购的客户
 
 ### 题目描述
 
 ```
+某网站包含两个表，Customers 表和 Orders 表。编写一个 SQL 查询，找出所有从不订购任何东西的客户。
 
+Customers 表：
+
++----+-------+
+| Id | Name  |
++----+-------+
+| 1  | Joe   |
+| 2  | Henry |
+| 3  | Sam   |
+| 4  | Max   |
++----+-------+
+Orders 表：
+
++----+------------+
+| Id | CustomerId |
++----+------------+
+| 1  | 3          |
+| 2  | 1          |
++----+------------+
+例如给定上述表格，你的查询应返回：
+
++-----------+
+| Customers |
++-----------+
+| Henry     |
+| Max       |
++-----------+
 ```
 
 ```sql
 # 表架构
-
-
+Create table If Not Exists Customers (Id int, Name varchar(255));
+Create table If Not Exists Orders (Id int, CustomerId int);
+Truncate table Customers;
+insert into Customers (Id, Name) values ('1', 'Joe');
+insert into Customers (Id, Name) values ('2', 'Henry');
+insert into Customers (Id, Name) values ('3', 'Sam');
+insert into Customers (Id, Name) values ('4', 'Max');
+Truncate table Orders;
+insert into Orders (Id, CustomerId) values ('1', '3');
+insert into Orders (Id, CustomerId) values ('2', '1');
 ```
 
-### 解法
+### 常规排除解法
 
-**分析**：
+**分析**：常规解法。
+
+```sql
+select Name as Customers
+from Customers
+where Id not in (
+    select CustomerId
+    from Orders
+);
+```
+
+### 左联结解法
+
+**分析**：左联结很适合找在A中但不再B中的类型。
+
+```sql
+select c.Name as Customers
+from Customers as c left join Orders as o on c.Id = o.CustomerId
+where o.CustomerId is null;
+```
 
 ### 总结
+
+对于多表联结问题，**一张图**就够了，`left join` 意思是左边的全保留，如果左边的和右边的不符合 `on` 的条件，那么左边对应右边的列自动为 `null`。
+
+![多表联结问题](resources/img/多表联结问题.png)
+
+<center> 图出自《图解SQL面试题》</center>
 
 ## 184. 部门工资最高的员工
 
 ### 题目描述
 
 ```
+Employee 表包含所有员工信息，每个员工有其对应的 Id, salary 和 department Id。
 
++----+-------+--------+--------------+
+| Id | Name  | Salary | DepartmentId |
++----+-------+--------+--------------+
+| 1  | Joe   | 70000  | 1            |
+| 2  | Jim   | 90000  | 1            |
+| 3  | Henry | 80000  | 2            |
+| 4  | Sam   | 60000  | 2            |
+| 5  | Max   | 90000  | 1            |
++----+-------+--------+--------------+
+Department 表包含公司所有部门的信息。
+
++----+----------+
+| Id | Name     |
++----+----------+
+| 1  | IT       |
+| 2  | Sales    |
++----+----------+
+编写一个 SQL 查询，找出每个部门工资最高的员工。对于上述表，您的 SQL 查询应返回以下行（行的顺序无关紧要）。
+
++------------+----------+--------+
+| Department | Employee | Salary |
++------------+----------+--------+
+| IT         | Max      | 90000  |
+| IT         | Jim      | 90000  |
+| Sales      | Henry    | 80000  |
++------------+----------+--------+
+解释：
+
+Max 和 Jim 在 IT 部门的工资都是最高的，Henry 在销售部的工资最高。
 ```
 
 ```sql
 # 表架构
-
-
+Create table If Not Exists Employee (Id int, Name varchar(255), Salary int, DepartmentId int);
+Create table If Not Exists Department (Id int, Name varchar(255));
+Truncate table Employee;
+insert into Employee (Id, Name, Salary, DepartmentId) values (1, 'Joe', '70000', 1);
+insert into Employee (Id, Name, Salary, DepartmentId) values (2, 'Jim', '90000', 1);
+insert into Employee (Id, Name, Salary, DepartmentId) values (3, 'Henry', '80000', 2);
+insert into Employee (Id, Name, Salary, DepartmentId) values (4, 'Sam', '60000', 2);
+insert into Employee (Id, Name, Salary, DepartmentId) values (5, 'Max', '90000', 1);
+Truncate table Department;
+insert into Department (Id, Name) values (1, 'IT');
+insert into Department (Id, Name) values (2, 'Sales');
 ```
 
-### 解法
+### 内联结和 `IN` 解法
 
-**分析**：
+**分析**：先把两个表内联结，然后用 `IN` 语句查询结果是否在部门内最高工资的临时表中。
+
+```sql
+select d.name as 'Department', e.name as 'Employee', Salary
+from Employee as e inner join Department as d on e.DepartmentId = d.Id
+where (e.DepartmentId, Salary) in (
+    select DepartmentId, max(Salary)
+    from Employee
+    group by DepartmentId
+);
+```
 
 ### 总结
+
+多用联结。
 
 ## 185. 部门工资前三高的所有员工
 
 ### 题目描述
 
 ```
+Employee 表包含所有员工信息，每个员工有其对应的工号 Id，姓名 Name，工资 Salary 和部门编号 DepartmentId 。
 
++----+-------+--------+--------------+
+| Id | Name  | Salary | DepartmentId |
++----+-------+--------+--------------+
+| 1  | Joe   | 85000  | 1            |
+| 2  | Henry | 80000  | 2            |
+| 3  | Sam   | 60000  | 2            |
+| 4  | Max   | 90000  | 1            |
+| 5  | Janet | 69000  | 1            |
+| 6  | Randy | 85000  | 1            |
+| 7  | Will  | 70000  | 1            |
++----+-------+--------+--------------+
+Department 表包含公司所有部门的信息。
+
++----+----------+
+| Id | Name     |
++----+----------+
+| 1  | IT       |
+| 2  | Sales    |
++----+----------+
+编写一个 SQL 查询，找出每个部门获得前三高工资的所有员工。例如，根据上述给定的表，查询结果应返回：
+
++------------+----------+--------+
+| Department | Employee | Salary |
++------------+----------+--------+
+| IT         | Max      | 90000  |
+| IT         | Randy    | 85000  |
+| IT         | Joe      | 85000  |
+| IT         | Will     | 70000  |
+| Sales      | Henry    | 80000  |
+| Sales      | Sam      | 60000  |
++------------+----------+--------+
+解释：
+
+IT 部门中，Max 获得了最高的工资，Randy 和 Joe 都拿到了第二高的工资，Will 的工资排第三。销售部门（Sales）只有两名员工，Henry 的工资最高，Sam 的工资排第二。
 ```
 
 ```sql
 # 表架构
-
-
+Create table If Not Exists Employee (Id int, Name varchar(255), Salary int, DepartmentId int);
+Create table If Not Exists Department (Id int, Name varchar(255));
+Truncate table Employee;
+insert into Employee (Id, Name, Salary, DepartmentId) values ('1', 'Joe', '85000', '1');
+insert into Employee (Id, Name, Salary, DepartmentId) values ('2', 'Henry', '80000', '2');
+insert into Employee (Id, Name, Salary, DepartmentId) values ('3', 'Sam', '60000', '2');
+insert into Employee (Id, Name, Salary, DepartmentId) values ('4', 'Max', '90000', '1');
+insert into Employee (Id, Name, Salary, DepartmentId) values ('5', 'Janet', '69000', '1');
+insert into Employee (Id, Name, Salary, DepartmentId) values ('6', 'Randy', '85000', '1');
+insert into Employee (Id, Name, Salary, DepartmentId) values ('7', 'Will', '70000', '1');
+Truncate table Department;
+insert into Department (Id, Name) values ('1', 'IT');
+insert into Department (Id, Name) values ('2', 'Sales');
 ```
 
-### 解法
+### 窗口函数解法
 
-**分析**：
+**分析**： 多表分组 `TOPN` 问题。每组最大的N条记录。这类问题涉及到“既要分组，又要排序”的情况，要能想到用窗口函数来实现。
+
+```sql
+select  d.Name as Department, a.Name as Employee, a.Salary as Salary
+from (
+    select *, dense_rank() over (partition by DepartmentId
+                                 order by Salary desc) as salary_rank
+    from Employee
+) as a, Department as d
+where salary_rank <= 3 and a.DepartmentId = d.Id;
+```
 
 ### 总结
+
+`TOPN` 问题，一般分为单表不分组、多表不分组、单表分组、多表分组。单表不分组一般用 `limit` 子句就能解决，多表不分组一般用 `limit` 子句加上联结就能解决。单表分组、多表分组一般用窗口函数和联结解决。
+
+涉及到“既要分组，又要排序”的情况，要能想到用窗口函数来实现。
 
 ## 196. 删除重复的电子邮箱
 
 ### 题目描述
 
 ```
+编写一个 SQL 查询，来删除 Person 表中所有重复的电子邮箱，重复的邮箱里只保留 Id 最小 的那个。
 
++----+------------------+
+| Id | Email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
+| 3  | john@example.com |
++----+------------------+
+Id 是这个表的主键。
+例如，在运行你的查询语句之后，上面的 Person 表应返回以下几行:
+
++----+------------------+
+| Id | Email            |
++----+------------------+
+| 1  | john@example.com |
+| 2  | bob@example.com  |
++----+------------------+
+
+提示：
+
+执行 SQL 之后，输出是整个 Person 表。
+使用 delete 语句。
 ```
 
 ```sql
@@ -799,6 +1047,10 @@ FROM EmployeeA AS a INNER JOIN EmployeeA AS b ON a.ManagerId = b.Id AND a.Salary
 ### 解法
 
 **分析**：
+
+```sql
+
+```
 
 ### 总结
 
