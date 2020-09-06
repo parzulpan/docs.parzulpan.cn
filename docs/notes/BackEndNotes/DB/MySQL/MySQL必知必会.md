@@ -2378,7 +2378,7 @@ rename table customers_p to customers_rename;
 
 ## 使用视图
 
-### 试图
+### 视图
 
 视图是虚拟的表。与包含数据的表不一样，视图只包含使用时动态检索数据的查询。
 
@@ -2419,7 +2419,7 @@ rename table customers_p to customers_rename;
 * 用DROP删除视图，其语法为`DROP VIEW viewname;`。
 * 更新视图时，可以`先用DROP再用CREATE`，也可以`直接用CREATE OR REPLACE VIEW`。如果要更新的视图不存在，则第2条更新语句会创建一个视图；如果要更新的视图存在，则第2条更新语句会替换原有视图。
 
-#### 利用试图简化复杂的联结
+#### 利用视图简化复杂的联结
 
 视图的最常见的应用之一是隐藏(简化)复杂的SQL，这通常都会涉及联结。
 

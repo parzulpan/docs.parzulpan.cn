@@ -83,9 +83,9 @@ WHERE P.PersonId = A.PersonId;
 
 **原因**：没有考虑到 `Person` 表中的信息即使在 `Address` 表没有关联信息也要保留的情况。
 
-### 左外连接解法
+### 左外联结解法
 
-**分析**：对两个表进行连接操作时，考虑到 `Person` 表中的信息即使在 `Address` 表没有关联信息也要保留的情况，此时可以用左外连接，将 `Person` 表放在 `LEFT JOIN` 的左边。
+**分析**：对两个表进行联结操作时，考虑到 `Person` 表中的信息即使在 `Address` 表没有关联信息也要保留的情况，此时可以用左外联结，将 `Person` 表放在 `LEFT JOIN` 的左边。
 
 ```sql
 SELECT FirstName, LastName, City, State
@@ -182,7 +182,7 @@ MySQL中 `ISNULL`、`IFNULL`、`NULLIF` 的用法：
 * `IFNULL(expr1, expr2)`：如果 `expr1` 不为 `NULL`，则 `IFNULL()` 的返回值为 `expr1` ；否则其返回值为 `expr2` 。`IFNULL()` 的返回值是数字或是字符串，具体情况取决于其所使用的语境。
 * `NULLIF(expr1, expr2)`：如果 `expr1 = expr2` 成立，那么返回值为 `NULL`，否则返回值为`expr1`。这和`CASE WHEN expr1 = expr2 THEN NULL ELSE expr1 END`相同。
 
-`LIMIT x OFFSET y;`  即从第y行开始取x行。
+`LIMIT x OFFSET y;` 等价于 `LIMIT y, x;` 即从第y行开始取x行。
 
 ## 177. 第N高的薪水
 
@@ -276,7 +276,7 @@ END $$ -- 后跟的是定义的标识符
 DELIMITER $$ -- 结束
 ```
 
-`binlog` 是MySQL数据库的二进制日志，用于记录用户对数据库操作的SQL语句(除了数据查询语句）信息。可以使用 `mysqlbinlog` 命令查看二进制日志的内容。
+`binlog` 是MySQL数据库的二进制日志，用于记录用户对数据库操作的SQL语句（除了数据查询语句）信息。可以使用 `mysqlbinlog` 命令查看二进制日志的内容。
 
 `binlog` 的格式有三种：
 
@@ -374,7 +374,7 @@ FROM Scores;
 `<窗口函数>` 主要分为两种：
 
 * 专用窗口函数，如`rank`, `dense_rank`, `row_number`等。
-* 聚合函数，如max,sum等。
+* 聚合函数，如`max`,`sum`等。
 
 从语法可以知道，窗口函数有以下功能：
 
@@ -383,7 +383,7 @@ FROM Scores;
 
 因为窗口函数是对`where`或者`group by`子句处理后的结果进行操作，所以**窗口函数原则上只能写在select子句中**。
 
-**`RANK()`**：
+**`RANK()`** ：
 
 ```sql
 SELECT * FROM Scores;
@@ -417,7 +417,7 @@ FROM Scores;
 +------+-------+------+
 ```
 
-**`DENSE_RANK()`**：
+**`DENSE_RANK()`** ：
 
 ```sql
 SELECT * FROM Scores;
@@ -451,7 +451,7 @@ FROM Scores;
 +------+-------+------------+
 ```
 
-**`ROW_NUMBER()`**：
+**`ROW_NUMBER()`** ：
 
 ```sql
 SELECT * FROM Scores;
@@ -745,7 +745,7 @@ insert into Person (Id, Email) values ('3', 'a@b.com');
 select Email
 from (
     select Email, count(Email) as num
-    from Person182
+    from Person
     group by Email
  ) as tempTable
 where num > 1;
@@ -757,7 +757,7 @@ where num > 1;
 
 ```sql
 select Email
-from Person182
+from Person
 group by Email
 having count(Email) > 1;
 ```

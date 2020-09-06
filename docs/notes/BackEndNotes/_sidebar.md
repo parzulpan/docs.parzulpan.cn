@@ -60,6 +60,14 @@
       * [MySQL技术内幕：InnoDB存储引擎](/notes/BackEndNotes/DB/MySQL/MySQL技术内幕：InnoDB存储引擎.md)
     * **高频面试题**
       * [LeetCode 数据库模块](/notes/BackEndNotes/DB/MySQL/LeetCode.md)
+      * [高频面试题：基础知识](/notes/BackEndNotes/DB/MySQL/高频面试题：基础知识.md)
+      * [高频面试题：存储引擎](/notes/BackEndNotes/DB/MySQL/高频面试题：存储引擎.md)
+      * [高频面试题：索引](/notes/BackEndNotes/DB/MySQL/高频面试题：索引.md)
+      * [高频面试题：事务](/notes/BackEndNotes/DB/MySQL/高频面试题：事务.md)
+      * [高频面试题：锁](/notes/BackEndNotes/DB/MySQL/高频面试题：锁.md)
+      * [高频面试题：视图、存储过程、函数、触发器](/notes/BackEndNotes/DB/MySQL/高频面试题：视图、存储过程、函数、触发器.md)
+      * [高频面试题：SQL优化](/notes/BackEndNotes/DB/MySQL/高频面试题：SQL优化.md)
+      * [高频面试题：数据库优化](/notes/BackEndNotes/DB/MySQL/高频面试题：数据库优化.md)
   * **Redis**
     * **基础**
     * **进阶**
