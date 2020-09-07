@@ -70,6 +70,7 @@
       * [高频面试题：数据库优化](/notes/BackEndNotes/DB/MySQL/高频面试题：数据库优化.md)
   * **Redis**
     * **基础**
+      * [Redis实战](/notes/BackEndNotes/DB/Redis/Redis实战.md)
     * **进阶**
     * **高频面试题**
   * **MangoDB**
