@@ -26,7 +26,7 @@ Redis 的优点：
 Redis 的缺点：
 
 * **数据量限制**：由于 Redis 是内存数据库，所以单台机器存储的数据量跟机器本身的内存大小有段。虽然 Redis 本身有 Key 过期策略，但是还是需要提前预估和节约内存。如果内存增长过快，需要定期删除数据。
-*** 线程限制**：Redis 是单线程的，单台服务器无法充分利用多核服务器的 CPU。
+* **线程限制**：Redis 是单线程的，单台服务器无法充分利用多核服务器的 CPU。
 
 Redis的使用场景：
 
@@ -44,7 +44,7 @@ Redis的使用场景：
 五种结构：
 
 | 结构类型 | 结构存储的值 | 结构的读写能力 |
-| :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- |
 | STRING | 可以是字符串、整数或者浮点数 | 对整个字符串或者字符串的其中一部分执行操作；对整数和浮点数执行自增或者自减操作 |
 | LIST | 一个链表，链表上的每个节点都包含了一个字符串 | 从链表的两端推入或者弹出元素；根据偏移量对链表进行修剪；读取单个或者多个元素；根据值查找或者移除元素 |
 | SET | 包含字符串的无序收集器，并且被包含的每个字符串都是独一无二、各不相同的 | 添加、获取、移除单个元素；检查一个元素是否存在于集合中；计算交集、并集、差集；从集合中随机获取元素 |
@@ -59,27 +59,29 @@ Redis的使用场景：
 
 ![string-da](resources/string-da.png)
 
-| 命令| 行为 | 实例 | Python |
-| :--- | :--- | :--- | :--- |
-| `SET key value`  | 设置指定 key 的值 |  |  |
-| `GET key` | 获取指定 key 的值 |  |  |
-| `GETRANGE key start end` | 返回 key 中字符串值的子字符 |  |  |
-| `GETSET key value` | 将给定 key 的值设为 value ，并返回 key 的旧值 |  |  |
-| `GETBIT key offset` | 对 key 所储存的字符串值，获取指定偏移量上的位 |  |  |
-| `MGET key1 [key2..]` | 获取所有(一个或多个)给定 key 的值 |  |  |
-| `SETBIT key offset value` | 对 key 所储存的字符串值，设置或清除指定偏移量上的位 |  |  |
-| `SETEX key seconds value` | 将值 value 关联到 key ，并将 key 的过期时间设为 seconds |  |  |
-| `SETNX key value` | 只有在 key 不存在时设置 key 的值 |  |  |
-| `SETRANGE key offset value` | 用 value 参数覆写给定 key 所储存的字符串值，从偏移量 offset 开始 |  |  |
-| `STRLEN key` | 返回 key 所储存的字符串值的长度 |  |  |
-| `MSET key value [key value ...]` | 同时设置一个或多个 key-value 对 |  |  |
-| `PSETEX key milliseconds value` | 和 SETEX 命令相似，但它以毫秒为单位设置 |  |  |
-| `INCR key` | 将 key 中储存的数字值增一 |  |  |
-| `INCRBY key increment` | 将 key 所储存的值加上给定的增量值 |  |  |
-| `INCRBYFLOAT key increment` | 将 key 所储存的值加上给定的浮点增量值 |  |  |
-| `DECR key` | 将 key 中储存的数字值减一 |  |  |
-| `DECRBY key decrement` | key 所储存的值减去给定的减量值 |  |  |
-| `APPEND key value` | 如果 key 已经存在并且是一个字符串， APPEND 命令将指定的 value 追加到该 key 原来值（value）的末尾 |  |  |
+| 命令| 行为 | Python |
+| :--- | :--- | :--- |
+| `SET key value`  | 设置指定 key 的值 | `conn.set("new-string-key", "")` |
+| `GET key` | 获取指定 key 的值 | `conn.get("new-string-key")` |
+| `SETRANGE key offset value` | 用 value 参数覆写给定 key 所储存的字符串值，从偏移量 offset 开始 | `conn.setrange("new-string-key", 0, "H")` `conn.setrange("new-string-key", 11, ", how are you?")` |
+| `GETRANGE key start end` | 返回 key 中字符串值的子字符 | `conn.getrange("new-string-key", 3, 7)` |
+| `MSET key value [key value ...]` | 同时设置一个或多个 key-value 对 | `conn.mset(k1="v1", k2="v2")` |
+| `MGET key1 [key2...]` | 获取所有(一个或多个)给定 key 的值 | `conn.mget("another-key", "getset-key")` |
+| `GETSET key value` | 将给定 key 的值设为 value ，并返回 key 的旧值 | `conn.getset("getset-key", 1)` |
+| `INCR key` | 将 key 中储存的数字值增一 | `conn.incr("key")` |
+| `INCRBY key increment` | 将 key 所储存的值加上给定的增量值 | `conn.incr("key", 15)` |
+| `INCRBYFLOAT key increment` | 将 key 所储存的值加上给定的浮点增量值 | `conn.incrbyfloat("key", 0.5)` |
+| `DECR key` | 将 key 中储存的数字值减一 | `conn.decr("key")` |
+| `DECRBY key decrement` | key 所储存的值减去给定的减量值 | `conn.decr("key", 15)` |
+| `APPEND key value` | 如果 key 已经存在并且是一个字符串， APPEND 命令将指定的 value 追加到该 key 原来值（value）的末尾 | `conn.append("new-string-key", "hello ")` |
+| `SETBIT key offset value` | 对 key 所储存的字符串值，设置或清除指定偏移量上的位 | `conn.setbit("another-key", 2, 1)` |
+| `GETBIT key offset` | 对 key 所储存的字符串值，获取指定偏移量上的位 | `conn.getbit("another-key", 2)` |
+| `BITCOUNT key [start end]` | 统计二进制位串里面值为 1 的二进制位的数量，如果给定了可选的 start 和 end 偏移量，那么只对这个范围进行统计 | `conn.bitcount("another-key", 0, 7)` |
+| `BITOP operation dest-key key1 [key2...]` | 对一个或多个二进制位串执行包括并、或、异或、非在内的任意一种按位运算操作，并将计算计算得出的结果保存在 dest-key键里面 | `conn.bitop("NOT", "bitop-key", "another-key")` |
+| `SETEX key seconds value` | 将值 value 关联到 key ，并将 key 的过期时间设为秒 | `conn.setex("setex-key", 5, 10)` |
+| `PSETEX key milliseconds value` | 和 SETEX 命令相似，但它以毫秒为单位设置 | `conn.psetex("psetex-key", 5, 10)` |
+| `SETNX key value` | 只有在 key 不存在时设置 key 的值 | `conn.setnx("setex-key", 10)` |
+| `STRLEN key` | 返回 key 所储存的字符串值的长度 | `conn.strlen("another-key")` |
 
 ### Redis 中的列表
 
@@ -89,25 +91,25 @@ Redis中的列表是简单的字符串列表，按照插入顺序排序，可以
 
 ![list-da](resources/string-da.png)
 
-| 命令| 行为 | 实例 | Python |
-| :--- | :--- | :--- | :--- |
-| `BLPOP key1 [key2 ] timeout` | 移出并获取列表的第一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止 |  |  |
-| `BRPOP key1 [key2 ] timeout` | 移出并获取列表的最后一个元素， 如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止 |  |  |
-| `BRPOPLPUSH source destination timeout` | 从列表中弹出一个值，将弹出的元素插入到另外一个列表中并返回它，如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止 |  |  |
-| `LINDEX key index` | 通过索引获取列表中的元素 |  |  |
-| `LINSERT key BEFORE|AFTER pivot value` | 在列表的元素前或者后插入元素 |  |  |
-| `LLEN key` | 获取列表长度 |  |  |
-| `LPOP key` | 移出并获取列表的第一个元素 |  |  |
-| `LPUSH key value1 [value2]` | 将一个或多个值插入到列表头部 |  |  |
-| `LPUSHX key value` | 将一个值插入到已存在的列表头部 |  |  |
-| `LRANGE key start stop` | 获取列表指定范围内的元素 |  |  |
-| `LREM key count value` | 移除列表元素 |  |  |
-| `LSET key index value` | 通过索引设置列表元素的值 |  |  |
-| `LTRIM key start stop` | 对一个列表进行修剪，即让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除 |  |  |
-| `RPOP key` | 移除列表的最后一个元素，返回值为移除的元素 |  |  |
-| `RPOPLPUSH source destination` | 移除列表的最后一个元素，并将该元素添加到另一个列表并返回 |  |  |
-| `RPUSH key value1 [value2]` | 在列表中添加一个或多个值 |  |  |
-| `RPUSHX key value` | 为已存
+| 命令| 行为 | Python |
+| :--- | :--- | :--- |
+| `RPUSH key value1 [value2]` | 将一个或多个值推入列表的右端 | `conn.rpush("list-key", "last")` |
+| `RPUSHX key value` | 将一个值推入已存在列表的右端 | `conn.rpushx("list-key-1", "last")` |
+| `LPUSH key value1 [value2]` | 将一个或多个值推入列表的左端 | `conn.lpush("list-key", "frist")` |
+| `LPUSHX key value` | 将一个值推入已存在列表的左端 | `conn.lpushx("list-key-1", "frist")` |
+| `LPOP key` | 移出并返回列表的第一个元素 | `conn.lpop("list-key")` |
+| `BLPOP key1 [key2 ] timeout` | 从第一个非空列表中弹出位于最左端的元素，或者在 timeout 秒之内阻塞并等待可弹出的元素出现 | `conn.blpop("list-key", 3)` |
+| `RPOP key` | 移出并返回列表的最后一个元素 | `conn.rpop("list-key")` |
+| `BRPOP key1 [key2 ] timeout` | 从第一个非空列表中弹出位于最右端的元素，或者在 timeout 秒之内阻塞并等待可弹出的元素出现 | `conn.brpop("list-key", 3)` |
+| `RPOPLPUSH source-key dest-key` | 从 source-key 列表中弹出位于最右端的元素，然后将这个元素推入 dest-key 列表的最左端，并向用户返回这个元素 | `conn.rpoplpush("s-list", "d-list")` |
+| `BRPOPLPUSH source-key dest-key timeout` | 从 source-key 列表中弹出位于最右端的元素，然后将这个元素推入 dest-key 列表的最左端，并向用户返回这个元素。如果 source-key 为空，在 timeout 秒之内阻塞并等待可弹出的元素出现。 | `conn.brpoplpush("s-list", "d-list", 3)` |
+| `LINDEX key index` | 返回列表中偏移量（索引）为index的元素 | `conn.lindex("list-key", 0)` |
+| `LRANGE key start stop` | 返回列表指定范围内的元素，其中包括边界 | `conn.lrange("list-key", 0, -1)` |
+| `LTRIM key start stop` | 对列表进行修剪，只保留指定区间内的元素，其中包括边界，其余的元素都将被删除 | `conn.ltrim("list-key", 1, -1)` |
+| `LINSERT key BEFORE|AFTER pivot value` | 在列表的元素前或者后插入元素 | `conn.linsert("d-list", "before", 2, 23)` |
+| `LLEN key` | 获取列表长度 | `conn.llen("d-list")` |
+| `LREM key num value` | 移除列表指定元素，num=0，删除列表中所有的指定值；num=2，从前到后，删除2个； num=1，从前到后，删除1个；num=-2,从后向前，删除2个 | `conn.lrem("d-list", 0, 3)` |
+| `LSET key index value` | 通过索引设置列表元素的值 | `conn.lset("d-list", 0, 99)` |
 
 ### Redis 中的集合
 
@@ -119,23 +121,23 @@ Redis 中的集合是通过哈希表实现的，所以添加，删除，查找�
 
 ![set-da](resources/set-da.png)
 
-| 命令| 行为 | 实例 | Python |
-| :--- | :--- | :--- | :--- |
-| `SADD key member1 [member2]` | 向集合添加一个或多个成员 |  |  |
-| `SCARD key` | 获取集合的成员数 |  |  |
-| `SISMEMBER key member` | 判断 member 元素是否是集合 key 的成员 |  |  |
-| `SMEMBERS key` | 返回集合中的所有成员 |  |  |
-| `SMOVE source destination member` | 将 member 元素从 source 集合移动到 destination 集合 |  |  |
-| `SPOP key` | 移除并返回集合中的一个随机元素 |  |  |
-| `SRANDMEMBER key [count]` | 返回集合中一个或多个随机数 |  |  |
-| `SREM key member1 [member2]` | 移除集合中一个或多个成员 |  |  |
-| `SDIFF key1 [key2]` | 返回第一个集合与其他集合之间的差异 |  |  |
-| `SDIFFSTORE destination key1 [key2]` | 返回给定所有集合的差集并存储在 destination 中 |  |  |
-| `SINTER key1 [key2]` | 返回给定所有集合的交集 |  |  |
-| `SINTERSTORE destination key1 [key2]` | 返回给定所有集合的交集并存储在 destination 中 |  |  |
-| `SUNION key1 [key2]` | 返回所有给定集合的并集 |  |  |
-| `SUNIONSTORE destination key1 [key2]` | 所有给定集合的并集存储在 destination 集合中 |  |  |
-| `SSCAN key cursor [MATCH pattern] [COUNT count]` | 迭代集合中的元素 |  |  |
+| 命令| 行为 | Python |
+| :--- | :--- | :--- |
+| `SADD key member1 [member2]` | 向集合添加一个或多个成员 |  |
+| `SCARD key` | 获取集合的成员数 |  |
+| `SISMEMBER key member` | 判断 member 元素是否是集合 key 的成员 |  |
+| `SMEMBERS key` | 返回集合中的所有成员 |  |
+| `SMOVE source destination member` | 将 member 元素从 source 集合移动到 destination 集合 |  |
+| `SPOP key` | 移除并返回集合中的一个随机元素 |  |
+| `SRANDMEMBER key [count]` | 返回集合中一个或多个随机数 |  |
+| `SREM key member1 [member2]` | 移除集合中一个或多个成员 |  |
+| `SDIFF key1 [key2]` | 返回第一个集合与其他集合之间的差异 |  |
+| `SDIFFSTORE destination key1 [key2]` | 返回给定所有集合的差集并存储在 destination 中 |  |
+| `SINTER key1 [key2]` | 返回给定所有集合的交集 |  |
+| `SINTERSTORE destination key1 [key2]` | 返回给定所有集合的交集并存储在 destination 中 |  |
+| `SUNION key1 [key2]` | 返回所有给定集合的并集 |  |
+| `SUNIONSTORE destination key1 [key2]` | 所有给定集合的并集存储在 destination 集合中 |  |
+| `SSCAN key cursor [MATCH pattern] [COUNT count]` | 迭代集合中的元素 |  |
 
 ### Redis 中的哈希
 
@@ -145,22 +147,22 @@ Redis 中每个哈希可以存储 2^32 - 1 键值对（40多亿）。
 
 ![hash-da](resources/hash-da.png)
 
-| 命令| 行为 | 实例 | Python |
-| :--- | :--- | :--- | :--- |
-| `HDEL key field1 [field2]` | 删除一个或多个哈希表字段 |  |  |
-| `HEXISTS key field` | 查看哈希表 key 中，指定的字段是否存在 |  |  |
-| `HGET key field` | 获取存储在哈希表中指定字段的值 |  |  |
-| `HGETALL key` | 获取在哈希表中指定 key 的所有字段和值 |  |  |
-| `HINCRBY key field increment` | 为哈希表 key 中的指定字段的整数值加上增量 increment |  |  |
-| `HINCRBYFLOAT key field increment` | 为哈希表 key 中的指定字段的浮点数值加上增量 increment  |  |  |
-| `HKEYS key` | 获取所有哈希表中的字段 |  |  |
-| `HLEN key` | 获取哈希表中字段的数量 |  |  |
-| `HMGET key field1 [field2]` | 获取所有给定字段的值 |  |  |
-| `HMSET key field1 value1 [field2 value2]` | 同时将多个 field-value (域-值)对设置到哈希表 key 中 |  |  |
-| `HSET key field value` | 将哈希表 key 中的字段 field 的值设为 value |  |  |
-| `HSETNX key field value` | 只有在字段 field 不存在时，设置哈希表字段的值 |  |  |
-| `HVALS key` | 获取哈希表中所有值 |  |  |
-| `HSCAN key cursor [MATCH pattern] [COUNT count]` | 迭代哈希表中的键值对 |  |  |
+| 命令| 行为 | Python |
+| :--- | :--- | :--- |
+| `HDEL key field1 [field2]` | 删除一个或多个哈希表字段 |  |
+| `HEXISTS key field` | 查看哈希表 key 中，指定的字段是否存在 |  |
+| `HGET key field` | 获取存储在哈希表中指定字段的值 |  |
+| `HGETALL key` | 获取在哈希表中指定 key 的所有字段和值 |  |
+| `HINCRBY key field increment` | 为哈希表 key 中的指定字段的整数值加上增量 increment |  |
+| `HINCRBYFLOAT key field increment` | 为哈希表 key 中的指定字段的浮点数值加上增量 increment  |  |
+| `HKEYS key` | 获取所有哈希表中的字段 |  |
+| `HLEN key` | 获取哈希表中字段的数量 |  |
+| `HMGET key field1 [field2]` | 获取所有给定字段的值 |  |
+| `HMSET key field1 value1 [field2 value2]` | 同时将多个 field-value (域-值)对设置到哈希表 key 中 |  |
+| `HSET key field value` | 将哈希表 key 中的字段 field 的值设为 value |  |
+| `HSETNX key field value` | 只有在字段 field 不存在时，设置哈希表字段的值 |  |
+| `HVALS key` | 获取哈希表中所有值 |  |
+| `HSCAN key cursor [MATCH pattern] [COUNT count]` | 迭代哈希表中的键值对 |  |
 
 ### Redis 中的有序集合
 
@@ -174,28 +176,28 @@ Redis 中每个有序集合可以存储 2^32 - 1 键值对（40多亿）。
 
 ![order-set-da](resources/order-set-da.png)
 
-| 命令| 行为 | 实例 | Python |
-| :--- | :--- | :--- | :--- |
-| `ZADD key score1 member1 [score2 member2]` | 向有序集合添加一个或多个成员，或者更新已存在成员的分数 |  |  |
-| `ZCARD key` | 获取有序集合的成员数 |  |  |
-| `ZCOUNT key min max` | 计算在有序集合中指定区间分数的成员数 |  |  |
-| `ZINCRBY key increment member` | 有序集合中对指定成员的分数加上增量 increment |  |  |
-| `ZINTERSTORE destination numkeys key [key ...]` | 计算给定的一个或多个有序集的交集并将结果集存储在新的有序集合 key 中 |  |  |
-| `ZLEXCOUNT key min max` | 在有序集合中计算指定字典区间内成员数量 |  |  |
-| `ZRANGE key start stop [WITHSCORES]` | 通过索引区间返回有序集合指定区间内的成员 |  |  |
-| `ZRANGEBYLEX key min max [LIMIT offset count]` | 通过字典区间返回有序集合的成员 |  |  |
-| `ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT]` | 通过分数返回有序集合指定区间内的成员 |  |  |
-| `ZRANK key member` | 返回有序集合中指定成员的索引 |  |  |
-| `ZREM key member [member ...]` | 移除有序集合中的一个或多个成员 |  |  |
-| `ZREMRANGEBYLEX key min max` | 移除有序集合中给定的字典区间的所有成员 |  |  |
-| `ZREMRANGEBYRANK key start stop` | 移除有序集合中给定的排名区间的所有成员 |  |  |
-| `ZREMRANGEBYSCORE key min max` | 移除有序集合中给定的分数区间的所有成员 |  |  |
-| `ZREVRANGE key start stop [WITHSCORES]` | 返回有序集中指定区间内的成员，通过索引，分数从高到低 |  |  |
-| `ZREVRANGEBYSCORE key max min [WITHSCORES]` | 返回有序集中指定分数区间内的成员，分数从高到低排序 |  |  |
-| `ZREVRANK key member` | 返回有序集合中指定成员的排名，有序集成员按分数值递减排序 |  |  |
-| `ZSCORE key member` | 返回有序集中，成员的分数值 |  |  |
-| `ZUNIONSTORE destination numkeys key [key ...]` | 计算给定的一个或多个有序集的并集，并存储在新的 key 中 |  |  |
-| `ZSCAN key cursor [MATCH pattern] [COUNT count]` | 迭代有序集合中的元素（包括元素成员和元素分值） |  |  |
+| 命令| 行为 | Python |
+| :--- | :--- | :--- |
+| `ZADD key score1 member1 [score2 member2]` | 向有序集合添加一个或多个成员，或者更新已存在成员的分数 |  |
+| `ZCARD key` | 获取有序集合的成员数 |  |
+| `ZCOUNT key min max` | 计算在有序集合中指定区间分数的成员数 |  |
+| `ZINCRBY key increment member` | 有序集合中对指定成员的分数加上增量 increment |  |
+| `ZINTERSTORE destination numkeys key [key ...]` | 计算给定的一个或多个有序集的交集并将结果集存储在新的有序集合 key 中 |  |
+| `ZLEXCOUNT key min max` | 在有序集合中计算指定字典区间内成员数量 |  |
+| `ZRANGE key start stop [WITHSCORES]` | 通过索引区间返回有序集合指定区间内的成员 |  |
+| `ZRANGEBYLEX key min max [LIMIT offset count]` | 通过字典区间返回有序集合的成员 |  |
+| `ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT]` | 通过分数返回有序集合指定区间内的成员 |  |
+| `ZRANK key member` | 返回有序集合中指定成员的索引 |  |
+| `ZREM key member [member ...]` | 移除有序集合中的一个或多个成员 |  |
+| `ZREMRANGEBYLEX key min max` | 移除有序集合中给定的字典区间的所有成员 |  |
+| `ZREMRANGEBYRANK key start stop` | 移除有序集合中给定的排名区间的所有成员 |  |
+| `ZREMRANGEBYSCORE key min max` | 移除有序集合中给定的分数区间的所有成员 |  |
+| `ZREVRANGE key start stop [WITHSCORES]` | 返回有序集中指定区间内的成员，通过索引，分数从高到低 |  |
+| `ZREVRANGEBYSCORE key max min [WITHSCORES]` | 返回有序集中指定分数区间内的成员，分数从高到低排序 |  |
+| `ZREVRANK key member` | 返回有序集合中指定成员的排名，有序集成员按分数值递减排序 |  |
+| `ZSCORE key member` | 返回有序集中，成员的分数值 |  |
+| `ZUNIONSTORE destination numkeys key [key ...]` | 计算给定的一个或多个有序集的并集，并存储在新的 key 中 |  |
+| `ZSCAN key cursor [MATCH pattern] [COUNT count]` | 迭代有序集合中的元素（包括元素成员和元素分值） |  |
 
 ### 你好 Redis
 
