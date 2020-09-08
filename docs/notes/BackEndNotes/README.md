@@ -2,7 +2,7 @@
 
 ## 简介
 
-这是一份后端开发笔记总结与书籍资源分享。主要包括编程语言C++、Go、Python等，数据结构和算法，系统，网络，数据库MySQL、Redis、MangoDB等，设计模式，消息队列Kafka、RocketMQ等，系统设计，面试相关等。
+这是一份后端开发笔记总结与书籍资源分享。主要包括编程语言C++、Go、Python等，数据结构和算法，系统，网络，数据库MySQL、Redis、MangoDB等，设计模式，消息队列Kafka、RocketMQ等，搜索引擎Elasticsearch，系统设计，面试相关等。
 
 [在线阅读](https://docs.parzulpan.cn/#/notes/BackEndNotes/README)：GitHub，推荐外网速度好访问。
 
@@ -46,13 +46,15 @@
   * [《高性能MySQL》（中文第三版）](.) 提取码：待更新
   * [《MySQL技术内幕：InnoDB存储引擎》](.) 提取码：待更新
   * [《Redis实战》](.) 提取码：待更新
-  * [《Redis设计与实现》](.) 提取码：待更新
+  * [《Redis设计与实现》（中文第二版）](.) 提取码：待更新
   * [《MongoDB实战》](.) 提取码：待更新
   * [《MongoDB权威指南》](.) 提取码：待更新
 * **设计模式**
   * [《深入设计模式》](https://refactoringguru.cn/design-patterns) 提取码：在线网站
   * [《Head First 设计模式》](.) 提取码：待更新
 * **消息队列**
+  * 待更新
+* **搜索引擎**
   * 待更新
 * **系统设计**
   * [《数据密集型应用系统设计》](.) 提取码：待更新
