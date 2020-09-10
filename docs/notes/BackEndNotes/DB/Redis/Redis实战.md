@@ -1881,6 +1881,273 @@ Redis 使用 WATCH 命令来代替对数据进行加锁，但是是**乐观锁**
 
 #### 使用 Redis 构建锁
 
+为了对数据进行排它性访问，程序首先要做的就是获取锁。SETNX 命令天生就适合用来实现锁的功能，它只会在键不存在的情况为键设置值，而锁要做的就是将一个随机生成的128uuid设置为键的值，并使用这个值来防止锁被其他进程取得。
+
+如果程序在尝试获取锁的时候失败，那么它将不断地进行重试，直到成功地取得锁或者超过给定的时限为止。
+
+```python
+def acquice_lock(conn, lockname, acquire_timeout=10):
+    """获得锁"""
+
+    identifier = str(uuid.uuid4())
+
+    end = time.time() + acquire_timeout
+    while time.time() < end:
+        # 尝试获得锁
+        if conn.setnx("lock:" + lockname, identifier):
+            return identifier
+        time.sleep(0.001)
+    return False
+```
+
+获得锁后，使用锁重新实现商品购买操作：程序首先对市场进行加锁，接着检查商品的价格，并在确保买家有足够的钱来购买商品之后，对钱和商品进行相应的转移。当操作完成之后，程序就会释放锁。
+
+```python
+def purchase_item_with_lock(conn, buyerid, itemid, sellerid):
+    buyer = f'users:{buyerid}'
+    seller = f'users:{sellerid}'
+    item = f"{itemid}.{sellerid}"
+    inventory = f"inventory:{buyerid}"
+
+    locked = acquice_lock(conn, market)
+    if not locked:
+        return None
+
+    pipe = conn.pipeline(True)
+    try:
+        pipe.zscore("market:", item)
+        pipe.hget(buyer, "funds")
+        price, funds = pipe.execute()
+
+        if price is None or price > funds:
+            return None
+
+        pipe.hincrby(seller, "funds", int(price))
+        pipe.hincrby(buyer, "funds", int(-price))
+        pipe.sadd(inventory, itemid)
+        pipe.zrem("market:", item)
+        pipe.execute()
+        return True
+    finally:
+        release_lock(conn, market, locked)
+```
+
+释放锁：首先使用 WATCH 命令监视代表锁的键，接着检查键目前的值是否和加锁时设置的值相同，并在确认值没有变化之后删除该键。
+
+```python
+def release+lock(conn, lockname, identifier):
+    pipe = conn.pipeline(True)
+    lockname = "lock:" + lockname
+
+    while True:
+        try:
+            pipe.watch(lockname)
+            if pipe.get(lockname) = identifier:
+                pipe.multi()
+                pipe.delete(lockname)
+                pipe.execute()
+                return True
+            pipe.unwatch()
+            break
+        except redis.exceptions.WatchError:
+            pass
+    return False
+```
+
+#### 细粒度锁
+
+在前面介绍锁实现以及加锁操作的时候，我们考虑的是如何实现与WATCH 命令粒度相同的锁——这种锁可以把整个市场都锁住。因为我们是自己动手来构建锁实现，并且我们关心的不是整个市场，而是市场里面的某件商品是否存在，所以我们实际上可以将加锁的粒度变得更细一些。通过只锁住被买卖的商品而不是整个市场，可以减少锁竞争出现的几率并提升程序的性能。
+
+#### 带有超时限制特性的锁
+
+为了给锁加上超时限制特性，程序将在取得锁之后，调用 EXPIRE 命令来为锁设置过期时间，使得 Redis 可以自动删除超时的锁。为了确保锁在客户端已经崩溃（客户端在执行介于 SETNX 和 EXPIRE 之间的时候崩溃是最糟糕的）的情况下仍然能够自动被释放，客户端会在尝试获取锁失败之后，检查锁的超时时间，并为未设置超时时间的锁设置超时时间。因此锁总会带有超时时间，并最终因为超时而自动被释放，使得其他客户端可以继续尝试获取已被释放的锁。
+
+需要注意的一点是，因为多个客户端在同一时间内设置的超时时间基本上都是相同的，所以即使有多个客户端同时为同一个锁设置超时时间，锁的超时时间也不会产生太大变化。
+
+```python
+def acquice_lock_with_timeout(conn, lockname, acquire_timeout=10, lock_timeout = 10):
+    """获得 带有超时限制特性的锁"""
+
+    identifier = str(uuid.uuid4())
+    lockname = "lock:" + lockname
+    lock_timeout = int(math.ceil(loca_timeout))
+
+    end = time.time() + acquire_timeout
+    while time.time() < end:
+        # 尝试获得锁并设置超时时间
+        if conn.setnx(lockname, identifier):
+            conn.expire(lockname, lock_timeout)
+            return identifier
+        elif not conn,ttl(locaname):
+            # 检查过期时间，并在有需要时对其进行更新
+            conn.expire(lockname, lock_timeout)
+        time.sleep(0.001)
+    return False
+```
+
+在其他数据库里面，加锁通常是一个自动执行的基本操作。而 Redis 的 WATCH 、MULTI 和 EXEC ，就像之前所说的那样，只是一个乐观锁——这种锁只会在数据被其他客户端抢先修改了的情况下，通知加锁的客户端，让它撤销对数据的修改，而不会真正地把数据锁住。
+
+通过在客户端上面实现一个真正的锁，程序可以为用户带来更好的性能、更熟悉的编程概念、更简单易用的API，等等。
+
+但是与此同时，也请记住 Redis 并不会主动使用这个自制的锁，我们必须自己使用这个锁来代替 WATCH ，或者同时使用锁和 WATCH 协同进行工作，从而保证数据的正确与一致。
+
+### 计数信号量
+
+计数信号量 （counting semaphore）也是一种锁，这种锁并没有一般的锁那么常用，但是当我们需要让多个客户端同时访问相同的信息时，计数信号量就是完成这项任务的最佳工具。
+
+它可以让用户限制一项资源最多能够同时被多少个进程访问，通常用于限定能够同时使用的资源数量。你可以把我们在前一节创建的锁看作是只能被一个进程访问的信号量。
+
+计数信号量和其他种类的锁一样，都需要被获取和释放。客户端首先需要获取信号量，然后执行操作，最后释放信号量。计数信号量和其他锁的区别在于，当客户端获取锁失败的时候，客户端通常会选择进行等待；而当客户端获取计数信号量失败的时候，客户端通常会选择立即返回失败结果。
+
+#### 构建基本的计数信号量
+
+构建计数信号量时要考虑的事情和构建其他类型的锁时要考虑的事情大部分都是相同的，比如判断是哪个客户端取得了锁，如何处理客户端在获得锁之后崩溃的情况，以及如何处理锁超时的问题。实际上，如果我们不考虑信号量超时的问题，也不考虑信号量的持有者在未释放信号量的情况下崩溃的问题，那么有好几种不同的方法可以非常方便地构建出一个信号量实现。遗憾的是，从长远来看，这些简单方便的方法构建出来的信号量都不太实用，因此我们将通过持续改进的方式来提供一个功能完整的计数信号量。
+
+使用 Redis 来实现超时限制特性通常有两种方法可选：
+
+* 一种是像之前构建分布式锁那样，使用 EXPIRE 命令。
+* 另一种则是使用有序集合。
+
+为了将多个信号量持有者的信息都存储到同一个结构里面，这次我们将使用有序集合来构建计数信号量。说得更具体一点，程序将为每个尝试获取信号量的进程生成一个唯一标识符，并将这个标识符用作有序集合的成员，而成员对应的分值则是进程尝试获取信号量时的Unix时间戳。
+
+![存储信号量信息的有序集合](resources/存储信号量信息的有序集合.png)
+
+进程在尝试获取信号量时会生成一个标识符，并使用当前时间戳作为分值，将标识符添加到有序集合里面。接着进程会检查自己的标识符在有序集合中的排名 。如果排名低于可获取的信号量总数（成员的排名从0开始计算），那么表示进程成功地取得了信号量。反之，则表示进程未能取得信号量，它必须从有序集合里面移除自己的标识符。为了处理过期的信号量，程序在将标识符添加到有序集合之前，会先清理有序集合中所有时间戳大于超时数值（timeout number value）的标识符。
+
+```python
+def acquire_semaphore(conn, semname, limit, timeout=10):
+
+    identifier = str(uuid.uuid4())
+    now = time.time()
+    pipe = conn.pipeline(True)
+
+    # 清理过期的信号量持有者
+    pipe.zremrangebyscore(semname, "-inf", now - timeout)
+    pipe.zadd(semname, identifier, now)
+    pipe.zrank(semname, identifier)
+
+    # 检查是否获得了信号量
+    if pipe.execute()[-1] < limit:
+        return identifier
+
+    # 获取失败，删除之前添加的标识符
+    conn.zrem(semname, identifier)
+    return None
+```
+
+信号量释放操作非常简单：程序只需要从有序集合里面移除指定的标识符就可以了。
+
+```python
+def release_semaphore(conn, semname, identifier):
+    return conn.zrem(semname, identifier)
+```
+
+这个基本的信号量实现非常好用，它不仅简单，而且运行速度也飞快。但这个信号量实现也存在一些问题：它在获取信号量的时候，会假设每个进程访问到的系统时间都是相同的，而这一假设在多主机环境下可能并不成立。
+
+每当锁或者信号量因为系统时钟的细微不同而导致锁的获取结果出现剧烈变化时，这个锁或者信号量就是不公平的 （unfair）。不公平的锁和信号量可能会导致客户端永远也无法取得它原本应该得到的锁或信号量。
+
+#### 公平信号量
+
+当各个系统的系统时间并不完全相同的时候，前面介绍的基本信号量就会出现问题：**系统时钟较慢的系统上运行的客户端，将能够偷走系统时钟较快的系统上运行的客户端已经取得的信号量，导致信号量变得不公平。**
+
+为了尽可能地减少系统时间不一致带来的问题，我们需要给信号量实现添加一个**计数器**以及一个**有序集合**。其中，计数器通过持续地执行自增操作，创建出一种类似于计时器（timer）的机制，**确保最先对计数器执行自增操作的客户端能够获得信号量**。另外，为了满足“最先对计数器执行自增操作的客户端能够获得信号量”这一要求，程序会将计数器生成的值用作分值，存储到一个“信号量拥有者”有序集合里面，然后通过检查客户端生成的标识符在有序集合中的排名来判断客户端是否取得了信号量。
+
+![公平信号量的数据结构](resources/公平信号量的数据结构.png)
+
+首先通过从超时有序集合里面移除过期元素的方式来移除超时的信号量，接着对超时有序集合和信号量拥有者有序集合执行交集计算，并将计算结果保存到信号量拥有者有序集合里面，覆盖有序集合中原有的数据。之后，程序会对计数器执行自增操作，并将计数器生成的值添加到信号量拥有者有序集合里面；与此同时，程序还会将当前的系统时间添加到超时有序集合里面。在完成以上操作之后，程序会检查当前客户端添加的标识符在信号量拥有者有序集合中的排名是否足够低，如果是的话就表示客户端成功取得了信号量。相反地，如果客户端未能取得信号量，那么程序将从信号量拥有者有序集合以及超时有序集合里面移除与该客户端相关的元素。
+
+```python
+def acuire_fair_semaphore(conn, semname, limit, timeout=10):
+
+    identifier = str(uuid.uuid4())
+    czset = semname + ":owner"
+    ctr = semname + ":counter"
+    now = time.time()
+    pipe = conn.pipeline(True)
+
+    # 删除超时的信号量
+    pipe.zremrangebyscore(semname, "-inf", now - timeout)
+    pipe.zinterstore(czset, {czset:1, semname: 0})
+
+    pipe.incr(ctr)
+    counter = pipe.execute()[-1]
+
+    pipe.zadd(semname, identifier, now)
+    pipe.zadd(czset, identifier, counter)
+
+    pipe.zrank(czset, identifier)
+    if pipe.execute()[-1] < limit:
+        return identifier
+
+    pipe.zrem(semname, identifier)
+    pipe.zrem(czset, identifier)
+    pipe.execute()
+    return None
+```
+
+`acquire_fair_semaphore()` 函数和之前的 `acquire_semaphore()` 函数有一些不同的地方：它首先清除已经超时的信号量，接着更新信号量拥有者有序集合并获取计数器生成的新ID值，之后，函数会将客户端的当前时间戳添加到过期时间有序集合里面，并将计数器生成的ID值添加到信号量拥有者有序集合里面，这样就可以检查标识符在有序集合里面的排名是否足够低了。
+
+公平信号量的释放操作几乎和基础信号量的释放操作一样简单，它们之间的唯一区别在于：公平信号量的释放操作需要同时从信号量拥有者有序集合以及超时有序集合里面删除当前客户端的标识符。
+
+```python
+def release_fair_semaphore(conn, semname, identifier):
+    pipe = conn.pipeline(True)
+    pipe.zrem(semname, identifier)
+    pipe.zrem(semname + ":owner", identifier)
+    return pipe.execute()[0]
+```
+
+#### 刷新信号量
+
+#### 消除竞争条件
+
+为了消除信号量实现中所有可能出现的竞争条件，构建一个正确的计数器信号量实现，我们需要用到前面构建的带有超时功能的分布式锁。总的来说，当程序想要获取信号量的时候，它会先尝试获取一个带有短暂超时时间的锁。如果程序成功取得了锁，那么它就会接着执行正常的信号量获取操作。如果程序未能取得锁，那么信号量获取操作也宣告失败。
+
+```python
+def acquire_semaphore_with_lock(conn, semname, limit, timeout=10):
+    identifier = acquire_lock(conn, semname, acquire_timeout=0.01)
+    if identifier:
+        try:
+            return acquire_fail_semaphore(conn, semname, limitn timeout)
+        finally:
+            release_lock(conn, semname, identifier)
+```
+
+### 任务队列
+
+在处理Web客户端发送的命令请求时，某些操作的执行时间可能会比我们预期的更长一些。通过将待执行任务的相关信息放入队列里面，并在之后对队列进行处理，用户可以推迟执行那些需要一段时间才能完成的操作，这种将工作交给任务处理器来执行的做法被称为任务/消息队列 （task queue）。
+
+消息队列是大型网站必用中间件，如 ActiveMQ、RabbitMQ、Kafka 等流行的消息队列中间件，主要用于业务解耦、流量削峰及异步处理实时性低的业务。Redis提供了发布/订阅及阻塞队列功能，能实现一个简单的消息队列系统。另外，这个不能和专业的消息中间件相比。
+
+#### 先进先出队列
+
+在队列领域中，除了任务队列之外，其他几种不同的队列也常常会被人谈起——比如先进先出（FIFO）队列、后进先出（LIFO）队列和优先级（priority）队列。
+
+因为先进先出队列具有语义清晰、易于实现和速度快等优点，所以本节首先介绍先进先出队列，然后再说明如何实现一个简陋的优先级队列，以及如何实现一个基于时间来执行任务的延迟队列。
+
+### 消息拉取
+
+两个或多个客户端在互相发送和接收消息的时候，通常会使用以下两种方法来传递消息：
+
+* 第一种方法被称为消息推送 （push messaging），也就是由发送者来确保所有接收者已经成功接收到了消息。Redis 内置了用于进行消息推送的 PUBLISH 命令和SUBSCRIBE 命令。
+* 第二种方法被称为消息拉取 （pull messaging），这种方法要求接收者自己去获取存储在某种邮箱（mailbox）里面的消息。
+
+尽管消息推送非常有用，但是当客户端因为某些原因而没办法一直保持在线的时候，采用这一消息传递方法的程序就会出现各种各样的问题。
+
+因为只有单个接收者的消息传递操作和前面介绍过的先进先出队列有很多共通之处，所以本节首先会介绍如何实现只有单个接收者的消息传递操作，然后再介绍如何开发具有多个接收者的消息传递操作。通过使用自制的多接收者消息传递操作来代替Redis的PUBLISH 命令和SUBSCRIBE 命令，即使接收者曾经断开过连接，它也可以一封不漏地收到所有发给它的消息。
+
+#### 单接收者消息的发送与订阅替代品
+
+每条消息都只会被发送至一个客户端，这一点极大地简化了我们要解决的问题。为了以这种方式来处理消息，我们将为每个移动客户端使用一个列表结构。发送者会把消息放到接收者的列表里面，而接收者客户端则通过发送请求来获取最新的消息。通过使用HTTP 1.1协议的流水线请求特性或者新型的Web套接字功能，移动客户端既可以在一次请求里面获取所有未读消息，又可以每次请求只获取一条未读消息，还可以通过使用LTRIM 命令移除列表的前10个元素来获取最新的10条未读消息。
+
+因为未读消息队列是使用列表结构来实现的，所以发送者只需要检查接收者的未读消息队列，就可以知道接收者最近是否有上线、接收者是否已经收到了之前发送的消息，以及接收者是否有太多未读消息等待处理。
+
+#### 多接收者消息的发送与订阅替代品
+
+### 使用 Redis 进行文件分发
+
+### 小结
+
 ## 基于搜索的应用程序
 
 ## 构建简单的社交网络
