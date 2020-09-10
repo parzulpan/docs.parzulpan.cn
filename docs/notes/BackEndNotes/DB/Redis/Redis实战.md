@@ -1371,59 +1371,59 @@ def purchase_item(conn,buyerid,itemid,sellerid,lprice):
 
 **那么如何在不使用事务的情况下，通过使用流水线来提高命令执行的性能呢？**
 
-在需要执行大量命令的情况下，即使命令实际上并不需要放在事务里面执行，但是为了通过一次发送所有命令来减少通信次数并降低延迟值，用户也可能会将命令包裹在multi和exec里面执行。遗憾的是，multi 和 exec 并不是免费的，它们也会消耗资源，并且可能会导致其他重要的命令被延迟执行。不过好消息是，我们实际上可以在不使用multi和exec的情况下，获得流水线代理的所有好处。
+在需要执行大量命令的情况下，即使命令实际上并不需要放在事务里面执行，但是为了通过一次发送所有命令来减少通信次数并降低延迟值，用户也可能会将命令包裹在 multi 和 exec 里面执行。遗憾的是，multi 和 exec 并不是免费的，它们也会消耗资源，并且可能会导致其他重要的命令被延迟执行。不过好消息是，我们实际上可以在不使用 multi 和 exec 的情况下，获得流水线代理的所有好处。
 
-如果用户在执行 `pipeline()` 时传入 True 作为参数，或者不传入任何参数，那么客户端将使用 multi 和 exec 包裹起用户要执行的所有命令。另一方面，如果用户在执行 `pipeline()` 时传入 False 为参数，那么客户端同样会像执行事务那样收集起用户要执行的所有命令，只是不再使用 multi 和 exec 包裹这些命令。
+如果用户在执行 `pipeline()` 时传入 **True** 作为参数，或者不传入任何参数，那么客户端将使用 multi 和 exec 包裹起用户要执行的所有命令。另一方面，如果用户在执行 `pipeline()` 时传入 **False** 为参数，那么客户端同样会像执行事务那样收集起用户要执行的所有命令，只是不再使用 multi 和 exec 包裹这些命令。
 
-如果用户需要向 Redis 发送多个命令，并且对于这些命令来说，一个命令的执行结果并不会影响另一个命令的输入，而且这些命令也不需要以实物的方式来执行的话，那么我们可以通过向 `pipeline()` 方法传入 False 来进一步提升Redis的整体性能。
+如果用户需要向 Redis 发送多个命令，并且对于这些命令来说，一个命令的执行结果并不会影响另一个命令的输入，而且这些命令也不需要以实物的方式来执行的话，那么我们可以通过向 `pipeline()` 方法传入 False 来进一步提升 Redis 的整体性能。
 
-前面章节曾经编写并更新过一个名为 `update_token()` 函数，它负责记录用户最近浏览过的商品以及用户最近访问过的页面，并更新用户的登录 cookie。下面代码是之前展示过得更新版 `update_token()` 函数，这个函数每次执行都会调用 2 个或者 5 个 Redis 命令，使得客户端和 Redis 之间产生 2 次或 5 次通信往返。
+前面章节曾经编写并更新过一个名为 `update_token()` 函数，它负责记录用户最近浏览过的商品以及用户最近访问过的页面，并更新用户的登录 cookie。下面代码是之前展示过的更新版 `update_token()` 函数，这个函数每次执行都会调用 2 个或者 5 个 Redis 命令，使得客户端和 Redis 之间产生 2 次或 5 次通信往返。
 
 ```python
 import time
 
 
-def update_token(conn,token,user,item=None):
+def update_token(conn, token, user, item=None):
     # 获取时间戳
     timestamp = time.time()
 
     # 创建令牌和已登陆用户之间的映射
-    conn.hset('login:',token,user)
+    conn.hset('login:', token,user)
 
     # 记录令牌最后一次出现的时间
-    conn.zadd('recent:',token,timestamp)
+    conn.zadd('recent:', token, timestamp)
     if item:
         # 把用户浏览过的商品记录起来
-        conn.zadd('viewed:'+token,item,timestamp)
+        conn.zadd('viewed:'+token, item, timestamp)
         # 移除旧商品，只记录最新浏览的25件商品
-        conn.zremrangebyrank('viewed:'+token, 0, -26)
+        conn.zremrangebyrank('viewed:' + token, 0, -26)
         # 更新给定商品的被浏览次数
         conn.zincrby('viewed:', item, -1)
 ```
 
-如果 Redis 和 Web 服务器通过局域网进行连接，那么他们之前的每次通信往返大概需要耗费一两毫秒，因此需要进行2次或者5次通信往返的 `update_token()` 函数大概需要花费2~10毫秒来执行，按照这个速度计算，单个Web服务器线程每秒可以处理100~500个请求，尽管这种速度已经非常可观了，但是我们还可以在这个速度的基础上更新一步：通过修改 `update_token()` 函数，让它创建一个非事务型流水线，然后使用这个流水线来发送所有请求：
+如果 Redis 和 Web 服务器通过局域网进行连接，那么他们之前的每次通信往返大概需要耗费一两毫秒，因此需要进行2次或者5次通信往返的 `update_token()` 函数大概需要花费2~10毫秒来执行，按照这个速度计算，单个 Web 服务器线程每秒可以处理100到500个请求，尽管这种速度已经非常可观了，但是我们还可以在这个速度的基础上更新一步：通过修改 `update_token()` 函数，让它创建一个非事务型流水线，然后使用这个流水线来发送所有请求：
 
 ```python
 import time
 
 
-def update_token_pipeline(conn,token,user,item=None):
+def update_token_pipeline(conn, token, user, item=None):
     # 获取时间戳
     # 设置流水线
     pipe = conn.pipeline(False)
     timestamp = time.time()
 
     # 创建令牌和已登陆用户之间的映射
-    conn.hset('login:',token,user)
+    conn.hset('login:', token, user)
     # 记录令牌最后一次出现的时间
-    conn.zadd('recent:',token,timestamp)
+    conn.zadd('recent:', token, timestamp)
     if item:
         # 把用户浏览过的商品记录起来
-        conn.zadd('viewed:'+token,item,timestamp)
+        conn.zadd('viewed:' + token,item,timestamp)
         # 移除旧商品，只记录最新浏览的25件商品
-        conn.zremrangebyrank('viewed:'+token,0,-26)
+        conn.zremrangebyrank('viewed:' + token, 0, -26)
         # 更新给定商品的被浏览慈善
-        conn.zincrby('viewed:',item,-1)
+        conn.zincrby('viewed:', item, -1)
     pipe.execute()
 ```
 
@@ -1435,7 +1435,7 @@ def update_token_pipeline(conn,token,user,item=None):
 
 要对 Redis 的性能进行优化，用户首先需要弄清楚各种类型的 Redis 命令到底能跑多快，而这一点可以通过调用 Redis 附带的性能测试程序 `redis-benchmark` 来得知。`redis-benchmark` 的运行结果展示了一些常用 Redis 命令**在1秒内可以执行的次数**。
 
-下表列出了只使用单个客户端的redis-benchmark与Python客户端之间的性能对比结果，并介绍了一些常见的造成客户端性能底下或者出错的原因：
+下表列出了只使用单个客户端的 redis-benchmark 与 Python 客户端之间的性能对比结果，并介绍了一些常见的造成客户端性能底下或者出错的原因：
 
 | 性能或者错误 | 可能的原因 | 解决方法 |
 | :--- | :--- | :--- |
@@ -1451,9 +1451,435 @@ def update_token_pipeline(conn,token,user,item=None):
 
 在多个客户端同时处理相同的数据时，可以使用 WATCH、MULTI、EXEC等命令来防止数据出错。
 
-## 使用Redis构建支持程序
+## 使用 Redis 构建支持程序
 
-## 使用Redis构建应用程序组件
+本章构建的组件并不是应用程序，但它们可以通过记录应用程序信息、记录访客信息、为应用程序提供配置信息等手段来帮助和支持应用程序。
+
+### 使用 Redis 来记录日志
+
+在Linux和Unix的世界中，有两种常见的记录日志的方法：
+
+* 将日志记录到文件里面，然后随着时间流逝不断地将一个又一个日志添加到文件里面，并在一段时间之后创建新的日志文件。包括 Redis 在内的很多软件都使用这种方法来记录日志。但这种记录日志的方式有可能会遇上麻烦，因为每个不同的服务器会创建不同的日志，而这些服务轮换日志也各不相同，并且也缺少一种能够方便地聚合所有日志并对其进行处理的常用方法。
+* syslog 服务是另外一种常用的日志记录方法，这个服务运行在几乎所有 Linux 服务器和 Unix 服务器的 514 号 TCP 端口和 UDP 端口上面。syslog 接受其他程序发来的日志信息，并将这些消息路由存储在硬盘上的各个日志文件里面，除此之外，syslog 还复制旧日志的轮换和删除工作。通过配置，syslog 甚至可以将日志消息转发给其他服务来做进一步的处理。因为指定日志的轮换和删除工作都交给 syslog 来完成，所以使用 syslog 服务比直接将日志写入文件要方便的多。
+
+#### 最新日志
+
+可以向你提供一种将最新出现的日志消息以列表的形式存储到Redis里面的方法，这个列表可以帮助及你随时了解最新出现的日志都是什么样子的。
+
+```python
+import logging
+import time
+
+
+# 设置一个字典，将大部分日志的安全级别映射为字符串
+SEVERITY={
+    logging.DEBUG:'debug',
+    logging.INFO:'info',
+    logging.WARNING:'warning',
+    logging.ERROR:'debug',
+    logging.CRITICAL:'critical',
+}
+SEVERITY.update((name, name) for name in SEVERITY.values())
+
+
+def log_recent(conn, nanem, message, severity=logging.INFO, pipe=None):
+    """最近的日志"""
+
+    # 尝试将日志的安全级别准还为简单的字符串
+    severity = str(SEVERITY.get(severity,severity)).lower()
+
+    # 创建负责存储消息的键
+    destination = f'recent:{name}:{severity}'
+
+    # 将当前时间添加到消息里面，用于记录消息的发送时间
+    message = time.asctime() + '  ' + message
+
+    # 使用流水线来将通信往返次数降低为一次
+    pipe = pipe or conn.pipeline()
+
+    # 将消息添加到日志列表的最前面
+    pipe.lpush(destination,message)
+
+    # 对日志列表进行修建，让它只包含最新的100条消息
+    pipe.ltrim(destination,0,99)
+
+    # 执行两个命令
+    pipe.execute()
+
+```
+
+#### 常见日志
+
+可以让程序记录特定消息出现的频率，并根据出现频率的高低来决定消息的排列顺序，从而帮助我们找出最重要的消息。
+
+```python
+def log_common(conn, name, message, severity=logging.INFO, timeout=5):
+    """记录并轮询最常见日志消息"""
+
+    # 尝试将日志的安全级别准还为简单的字符串
+    severity = str(SEVERITY.get(severity, severity)).lower()
+
+    # 负责存储近期的常见日志消息的键
+    destination = f'recent:{name}:{severity}'
+
+    #因为程序每小时需要轮换一次日志，所以它使用一个键来记录当前所处的小时数
+    start_key = destination+':start'
+
+    # 使用流水线来将通信往返次数降低为一次
+    pipe = conn.pipeline()
+    end = time.time() + timeout
+    while time.time() < end:
+        try:
+            # 当记录当前小时数的键进行监视，确保轮换操作可以正确的执行
+            pipe.watch(start_key)
+            # 取得当前时间
+            now = datetime.utcnow().timetuple()
+            # 取得当前所处的小时数
+            hour_start=datetime(*now[:4].isoformat())
+
+            existing=pipe.get(start_key)
+
+            # 创建一个事务
+            pipe.multi()
+
+            # 如果这个常见日志消息列表记录的是上个小时的日志
+            if existing and existing < hour_start:
+                # 将这些旧的常见日志消息归档
+                pipe.rename(destination, destination+':last')
+                pipe.rename(start_key, destination+':pstart')
+                # 更新当前所处的小时数
+                pipe.set(start_key, hour_start)
+            elif not existing:
+                pipe.set(start_key, hour_start)
+
+            # 对记录日志出现次数的计数器执行自增操作
+            pipe.zincrby(destination, message)
+
+            # log_recent()函数负责记录日志并调用execute()函数
+            log_recent(pipe,name,message,severity,pipe)
+            return
+        except redis.exceptions.WatchError:
+            continue
+
+```
+
+### 计数器和统计数据
+
+通过在一段时间内持续地记录统计数据信息，我们可以注意到流量的突增和渐增情况，预测何时需要对服务器进行升级，从而预防系统因为负载超载而下线。
+
+#### 将计数器存储到 Redis 里面
+
+**首先，对计数器进行更新。**
+
+为了对计数器进行更新，我们需要存储实际的计数器信息，对于每个计数器以及每种精度，如网站点击量计数器和 5 秒，我们将使用一个散列来存储网站在每个 5 秒时间片之内获得的点击量，其中，散列的每个键都是某个时间片的开始时间，而键对应的值则存储了网站在该时间片之内获得的点击量。
+
+![对计数器进行更新1](resources/对计数器进行更新1.png)
+
+为了能够清理计数器包含的旧数据，我们需要在使用计数器的同时，对被使用的计数器进行记录。为了做到这一点，我们需要一个有序序列，这个序列不能包含任何重复元素，并且能够让我们一个接一个地遍历序列中包含的所有元素。
+
+![对计数器进行更新2](resources/对计数器进行更新2.png)
+
+对于每种时间片精度，程序都会将计数器 的精度和名字作为引用信息添加都记录已有计数器的有序集合里面，并增加散列计数器在指定时间片内的计数值。
+
+```python
+import time
+
+# 以秒为单位的计数器精度，分别为1秒/5秒/1分钟/5分钟/1小时/5小时/1天
+# 用户可以按需调整这些精度
+PRECISION=[1, 5, 60, 300, 3600, 18000, 86400]
+
+def update_counter(conn,name,count=1,now=None):
+    """更新计数器"""
+    # 通过获取当前时间来判断应该对哪个时间片执行自增操作
+    now=now or time.time()
+
+    # 为了保证之后的清理工作可以正确的执行，这里需要创建一个事务性流水线
+    pipe = conn.pipeline()
+
+    # 为我们记录的每种精度都创建一个计数器
+    for prec in PRECISION:
+        # 取得当前时间片的开始时间
+        pnow = int(now / prec) * prec
+        # 创建负责存储计数信息的散列
+        hash = f'{prec}:{name}'
+        # 将计数器的引用信息添加到有序集合里面，并将其分值设为0，以便在之后执行清理操作
+        pipe.zadd('known:', hash, 0)
+        # 对给定名字和精度的计数器进行更新
+        pipe.hincrby('count:' + hash, pnow, count)
+    pipe.execute()
+```
+
+类似，从指定精度和名字的计数器里面获取计数数据也是一件非常容易地事情。
+
+```python
+def get_counter(conn, name, precision):
+    # 取得存储计数器数据的键的名字
+    hash = f'{precision}:{name}'
+
+    # 从Redis里面取出计数器数据
+    data = conn.hgetall('count:' + hash)
+    to_return = []
+
+    # 将计数器数据转换成指定的格式
+    for key, value in data.iteritems():
+        to_return.append((int(key), int(value)))
+
+    #对数据进行排序，把旧的数据样本排在前面
+    to_return.sort()
+
+    return to_return
+```
+
+**然后，清理旧计数器。**
+
+如果我们只是一味地对计数器进行更新而不执行任何清理操作的话，那么程序最终将会因为存储了过多的数据而导致内存不足。
+
+因为已将所有已知的计数器记录到了一个有序集合里面，所以对计数器进行清理只需要遍历有序集合并删除其中的旧计数器旧可以了。
+
+**为什么不使用 expire？**
+
+因为 expire 命令的其中一个限制就是它只能应用整个键，而不能只对键的某一部分数据进行过期处理。并且因为我们将同一个计数器在不同精度下的所有计数器数据都存放到了同一个键里面，所以我们必须定期地对计数器进行清理。
+
+在处理和清理旧数据的时候，需要注意的是：
+
+* 任何时候都可能会有新的计数器被添加进来。
+* 同一时间可能会有多个不同的清理操作在执行。
+* 对于一个每天只更新一次的计数器来说，以每分钟一次的频率尝试清理这个计数器只会浪费计算资源。
+* 如果一个计数器不包含任何数据，那么程序就不应该尝试对它进行清理。
+
+```python
+import bisect
+import time
+
+import redis
+
+
+QUIT = True
+SAMPLE_COUNT = 1
+
+
+def clean_counters(conn):
+    """清理计数器"""
+
+    pipe = conn.pipeline(True)
+
+    # 为了平等的处理更新频率各不相同的多个计数器，程序需要记录清理操作执行的次数
+    passes=0
+
+    # 持续地对计数器进行清理，知道退出为止
+    while not QUIT:
+        # 记录清理操作开始执行的时间，这个值将被用于计算清理操作的执行时长
+        start =t ime.time()
+        index = 0
+        # 渐进的遍历所有已知计数器
+        while index < conn.zcard('known:'):
+            # 取得被检查的计数器的数据
+            hash = conn.zrange('known:', index, index)
+            index += 1
+            if not hash:
+                break
+            hash = hash[0]
+            # 取得计数器的精度
+            prec = int(hash.partition(':')[0])
+
+            # 因为清理程序每60秒就会循环一次，所以这里需要根据计数器的更新频率来判断是否真的有必要对计数器进行清理
+            bprec = int(prec // 60) or 1
+
+            # 如果这个计数器在这次循环里不需要进行清理，那么检查下一个计数器。举个例子：如果清理程序只循环了3次，而计数器的更新频率是5分钟一次，那么程序暂时还不需要对这个计数器进行清理
+            if passes % bprec:
+                continue
+            hkey='count:' + hash
+
+            # 根据给定的精度以及需要保留的样本数量，计算出我们需要保留什么时间之前的样本。
+            cutoff = time.time() - SAMPLE_COUNT*prec
+
+            # 将conn.hkeys(hkey)得到的数据都转换成int类型
+            samples = map(int,conn.hkeys(hkey))
+            samples.sort()
+
+            # 计算出需要移除的样本数量。
+            remove=bisect.bisect_right(samples, cutoff)
+
+            # 按需要移除技术样本
+            if remove:
+                conn.hdel(hkey, *samples[:remove])
+                # 这个散列可能以及被清空
+                if remove == len(samples):
+                    try:
+                        # 在尝试修改计数器散列之前，对其进行监视
+                        pipe.watch(hkey)
+
+                        # 验证计数器散列是否为空，如果是的话，那么从记录已知计数器的有序集合里面移除它。
+                        if not pipe.hlen(hkey):
+                            pipe.multi()
+                            pipe.zrem('known:',hash)
+                            pipe.execute()
+
+                            # 在删除了一个计数器的情况下，下次循环可以使用与本次循环相同的索引
+                            index -= 1
+                        else:
+                            # 计数器散列并不为空，继续让它留在记录已知计数器的有序集合里面
+                            pipe.unwatch()
+                    except redis.exceptions.WatchError:
+                        # 有其他程序向这个计算器散列添加了新的数据，它已经不再是空的了，
+                        # 继续让它留在记录已知计数器的有序集合里面。
+                        pass
+            passes += 1
+            # 为了让清理操作的执行频率与计数器更新的频率保持一致
+            # 对记录循环次数的变量以及记录执行时长的变量进行更新。
+            duration=min(int(time.time() - start) + 1,60)
+            # 如果这次循环未耗尽60秒，那么在余下的时间内进行休眠，如果60秒已经耗尽，那么休眠1秒以便稍作休息
+            time.sleep(max(60-duration, 1))
+```
+
+#### 使用 Redis 存储统计数据
+
+在和一个真实的网站打交道的时候，知道页面每天的点击可以帮助我们判断是否需要对页面进行缓存。但是，如果被频繁访问的页面只需要花费 2 毫秒来进行渲染，而其他流量只要十分之一的页面却需要花费 2 秒来进行渲染，那么在缓存被频繁访问的页面之前，我们可以先将注意力放到优化渲染速度较慢的页面上去。
+
+#### 简化统计数据的记录与发现
+
+...
+
+### 查找 IP 所属城市以及国家
+
+之所以使用 Redis 而不是传统的关系型数据库来实现 IP 所属地查找功能，是因为 Redis 实现的 IP 所属地查找程序在运行速度上更具有优势。另一方面，因为对用户进行定位所需的信息量非常庞大，在应用程序启动时载入这些信息将影响应用程序的启动速度，所以我们也没有使用本地查找表来实现IP所属地查找功能。实现 IP 所属地查找功能首先要做的就是将一些数据表载入 Redis 里面。
+
+#### 载入位置表格
+
+为了开发IP所属地查找程序，我们将使用一个IP所属城市数据库作为测试数据。这个数据库包含两个非常重要的文件，[点我下载](https://dev.maxmind.com/geoip/geoip2/geolite2/)：
+
+* 一个是GeoLiteCity-Blocks.csv，它记录了多个IP地址段以及这些地址段所属城市的ID。
+* 另一个是GeoLiteCity-Location.csv，它记录了城市ID与城市名、地区名、州县名以及我们不会用到的其他信息之间的映射。
+
+实现IP所属地查找程序会用到两个查找表：
+
+* 第一个查找表需要根据输入的 IP 地址来查找 IP 所属城市的ID。
+* 第二个查找表则需要根据输入的城市 ID 来查找 ID 对应城市的实际信息（这个城市信息中还会包括城市所在地区的其他信息）。
+
+#### 查找 IP 所属城市
+
+...
+
+### 服务的发现和配置
+
+#### 使用 Redis 存储信息
+
+#### 为每个应用程序组件分别配置一个 Redis 服务器
+
+#### 自动 Redis 连接管理
+
+### 小结
+
+本章介绍的所有主题都直接或间接地用于对应用程序进行帮助和支持，这里展示的函数和装饰器都旨在帮助读者学会如何使用Redis来支撑应用程序的不用部分：日志、计数器以及统计数据可以帮助用户直观地了解应用程序的性能，而 IP 所属地查找程序则可以告诉你客户所在的地点。除此之外，存储服务的发现和配置信息可以帮助我们减少大量需要手动处理连接的工作。
+
+## 使用 Redis 构建应用程序组件
+
+这一章将会介绍更多更有用的工具和技术，并说明如何使用它们去构建更具有规模的Redis应用。
+
+### 自动补全
+
+在Web领域里面，自动补全是一种能够让用户在不进行搜索的情况下，快速找到所需东西的技术。自动补全一般会根据用户已输入的字母来查找所有以已输入字母为开头的单词，有些自动补全甚至可以在用户输入句子开头的时候自动补全整个句子。比如说，Google搜索的自动补全那样。不过类似 Google 搜索栏这样的自动补全是由很多 TB 的远程数据驱动的，而类似浏览器历史记录和网站登录框这样的自动补全则是由体积小得多的本地数据库驱动的。但所有的这些自动补全功能都可以让我们在更短的时间内找到想要的东西。
+
+#### 自动补全最近联系人
+
+实现一个用于记录最近联系人的自动补全程序。为了增加游戏的社交元素，并让用户快速的查找和记忆亲密的玩家，Fake Game 公司正考虑为他们的客户端创建一个联系人列表，并使用这个列表来记录每个用户最近联系过的100个玩家。当用户打算在客户端发起一次聊天并开始输入聊天对象的名字时，自动补全就会根据用户已经输入的文字，列出哪些昵称以输入文字为开头的人。
+
+构建最近联系人自动补全列表通常需要对 Redis 执行三个操作。
+
+第一个操作就是添加或者更新一个联系人，让他成为最新的被联系用户，这个操作包含以下3个步骤：
+
+* 如果指定的联系人已经存在于最近联系人列表里面，那么从列表里面移除它。
+* 将指定的联系人添加到最近联系人列表的最前面。
+* 如果在添加操作完成之后，最近联系人列表包含的联系人数量超过了100个，那么对列表进行修剪，只保留位于列表前面的100个联系人。
+
+```python
+def add_update_contact(conn, user, contact):
+    """添加并更新最近联系人"""
+
+    ac_list = 'recent:' + user
+
+    # 准备执行原子操作
+    pipeline = conn.pipeline(True)
+
+    # 如果联系人已经存在，那么移除它
+    pipeline.lrem(ac_list, contact)
+
+    # 将联系人推入列表的最前端
+    pipeline.lpush(ac_list, contact)
+
+    # 只保留列表里面的前100个联系人
+    pipeline.ltrim(ac_list, 0, 99)
+
+    # 实际地执行以上操作
+    pipeline.execute()
+```
+
+第二个操作就是在用户不想再看见某个联系人的时候，将制定的联系人从联系人列表里面移除掉。
+
+```python
+def remove_contact(conn, user, contact):
+    """移除指定的联系人"""
+    conn.lrem('recent:' + user, contact)
+```
+
+最后一个操作就是获取自动补全列表并查找匹配的用户。因为实际的自动补全处理是在 Python 里面完成的，所以操作需要首先获取整个列表结构，然后再在 Python 里面处理它。
+
+```python
+def fetch_autocomplete_list(conn, user, prefix):
+    """获取匹配信息"""
+
+    # 获取自动补全列表
+    candidates = conn.lrange('recent:' + user, 0, -1)
+    matches = []
+
+    #检查每个候选联系人
+    for candidate in candidates:
+        if candidate.lower().startswith(prefix):
+            # 发现匹配联系人
+            matches.append(candidate)
+
+    #返回所有匹配的联系人
+    return matches
+```
+
+可以分析，如果需要一个能够存储更多元素的最常使用列表或者最少使用列表，那么可以考虑使用带有时间戳的有序集合来替代列表。
+
+#### 通讯录自动补全
+
+...
+
+### 分布式锁
+
+对于能够被多个线程访问的**共享内存数据结构**来说，“先获取锁，然后执行操作，最后释放锁”的**动作**非常常见。
+
+Redis 使用 WATCH 命令来代替对数据进行加锁，但是是**乐观锁**。因为 WATCH 智慧在数据被其他客户端抢先修改了的情况下通知执行了这个命令的客户端，但是不会阻止其他客户端对数据进行修改。
+
+分布式锁也有上述类似的动作，但是这种锁既不是给同一个进程中的多个线程使用，也不是给同一台机器上的多个进程使用，而是由不同机器上的不同 Redis 客户端进行获取和释放的。何时使用以及是否使用 WATCH 取决于给定的应用程序。
+
+在 Redis 中，需要把锁构建在 Redis 里面，因为为了对 Redis 存储的数据进行排它性访问，客户端需要访问一个锁，这个锁必须定义在一个可以让所有客户端都看得见的范围之内，而这个范围就是 Redis 本身。另外，虽然 SETEX 命令确实具有基本的加锁功能，但是它的功能并不完整，并且也不具备分布式锁常见的一些高级特性，所以需要自己构建分布式锁。
+
+带着两个问题：
+
+* **为什么使用 WATCH 命令来监视被频繁访问的键可能会引起性能问题？**
+* **如何构建一个锁，并最终在某些情况下使用锁去代替 WATCH 命令。**
+
+#### 锁的重要性
+
+程序在尝试完成一个事务时，可能会因为事务执行失败而反复地进行重试。保证数据的正确性是意见非常重要的事情，但使用 WATCH 命令的做法并不完美，这就是锁的重要性。
+
+#### 简易锁
+
+简易版的锁非常简单，并且可能在一些情况下甚至无法运行。刚开始时，并不会立即处理那些可能会导致锁无法正常运作的问题，而是先构建出可以运行的锁获取操作和锁释放操作，等到证明了使用锁的确可以提升性能之后，才去解决那些引发锁故障的问题。
+
+为了防止客户端在取得锁之后崩溃，并导致锁一直处于“已被获取”的状态，最终版的锁实现将带有超时限制特性：如果获得锁的进程未能在指定的时限内完成操作，那么锁将被自动释放。
+
+一些导致锁出现不正确行为的原因以及锁在不正确运行时的症状：
+
+* 持有锁的进程因为操作时间过程而导致锁被自动释放，但进程本身并不知晓这一点，甚至还可能会错误地释放掉了其他进程持有的锁。
+* 一个持有锁并在打算执行长时间操作的进程已经崩溃，但其他想要获取锁的进程不知道哪个进程持有着锁，也无法检测出持有锁的进程已经崩溃，只能白白地浪费时间等待锁被释放。
+* 在一个进程持有的锁过期之后，其他多个进程同时尝试去获取锁，并且都获得了锁。
+
+#### 使用 Redis 构建锁
 
 ## 基于搜索的应用程序
 
@@ -1461,6 +1887,6 @@ def update_token_pipeline(conn,token,user,item=None):
 
 ## 降低内存占用
 
-## 扩展Redis
+## 扩展 Redis
 
-## Redis的Lua脚本编程
+## Redis 的 Lua 脚本编程
