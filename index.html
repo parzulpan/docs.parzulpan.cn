@@ -2,9 +2,65 @@
 <html>
 	<head>
 		<title>Homepage</title>
+		<link rel="icon" href="css/images/logo.png" type="image/x-icon">
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
+		<style>
+			.dropbtn {
+				background-color: #008CBA;
+				color: black;
+				padding: 16px;
+				font-size: 20px;
+				border: none;
+				cursor: pointer;
+				border-radius: 12px;
+				min-width: 150px;
+			}
+
+			.dropbtn1 {
+				background-color: #2693b8;
+			}
+
+			.dropbtn2 {
+				background-color: #509bb4;
+			}
+
+			.dropbtn3 {
+				background-color: #63a4b9;
+			}
+
+			.dropdown {
+				position: relative;
+				display: inline-block;
+			}
+			
+			.dropdown-content {
+				display: none;
+				position: absolute;
+				background-color: #f9f9f9;
+				min-width: 150px;
+				box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+				border-radius: 12px;
+				font-size: 13px;
+			}
+			
+			.dropdown-content a {
+				color: black;
+				padding: 9px 12px;
+				text-decoration: none;
+				display: block;
+			}
+			
+			.dropdown:hover .dropdown-content {
+				display: block;
+			}
+			
+			.dropdown:hover .dropbtn {
+				background-color: #c56363;
+			}
+
+		</style>
 		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
 		<script src="js/skel.min.js"></script>
 		<script src="js/init.js"></script>
@@ -29,14 +85,37 @@
 						<p></p>
 						<nav>
 							<ul>
-								<li><a href="#" class="fas fa-blog"><span class="label">博客</span></a></li>
-								<li><a href="#" class="icon fa-project"><span class="label">项目</span></a></li>
-								<li><a href="#" class="icon fa-note"><span class="label">笔记</span></a></li>
-								<li><a href="#" class="icon fa-info"><span class="label">联系</span></a></li>
+								<div class="dropdown">
+									<button class="dropbtn">Blog</button>
+									<div class="dropdown-content">
+									  <a href="https://www.cnblogs.com/parzulpan/">博客园</a>
+									</div>
+								</div>
+								<div class="dropdown">
+									<button class="dropbtn dropbtn1">Project</button>
+									<div class="dropdown-content">
+									  <a href="https://real-live.parzulpan.cn">网络直播聚合平台</a>
+									</div>
+								</div>
+								<td></td>
+								<div class="dropdown">
+									<button class="dropbtn dropbtn2">Note</button>
+									<div class="dropdown-content">
+									  <a href="https://bankendnote.parzulpan.cn">后端开发笔记</a>
+									</div>
+								</div>
+								<td></td>
+								<div class="dropdown">
+									<button class="dropbtn dropbtn3">Contact</button>
+									<div class="dropdown-content">
+									  <a href="https://resume.parzulpan.cn">简历</a>
+									  <a href="https://github.com/parzulpan">交友</a>
+									  <a href="mailto:parzulpan@gmail.com">邮箱</a>
+									</div>
+								</div>
 							</ul>
 						</nav>
 					</header>
-				
 			</div>
 		</div>
 	</body>
