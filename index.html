@@ -2,121 +2,103 @@
 <html>
 	<head>
 		<title>Homepage</title>
-		<link rel="icon" href="css/images/logo.png" type="image/x-icon">
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="description" content="" />
-		<meta name="keywords" content="" />
-		<style>
-			.dropbtn {
-				background-color: #008CBA;
-				color: black;
-				padding: 16px;
-				font-size: 20px;
-				border: none;
-				cursor: pointer;
-				border-radius: 12px;
-				min-width: 150px;
-			}
-
-			.dropbtn1 {
-				background-color: #2693b8;
-			}
-
-			.dropbtn2 {
-				background-color: #509bb4;
-			}
-
-			.dropbtn3 {
-				background-color: #63a4b9;
-			}
-
-			.dropdown {
-				position: relative;
-				display: inline-block;
-			}
-			
-			.dropdown-content {
-				display: none;
-				position: absolute;
-				background-color: #f9f9f9;
-				min-width: 150px;
-				box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-				border-radius: 12px;
-				font-size: 17px;
-			}
-			
-			.dropdown-content a {
-				color: black;
-				padding: 9px 12px;
-				text-decoration: none;
-				display: block;
-			}
-			
-			.dropdown:hover .dropdown-content {
-				display: block;
-			}
-			
-			.dropdown:hover .dropbtn {
-				background-color: #c56363;
-			}
-
-		</style>
-		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
-		<script src="js/skel.min.js"></script>
-		<script src="js/init.js"></script>
-		<noscript>
-			<link rel="stylesheet" href="css/skel.css" />
-			<link rel="stylesheet" href="css/style.css" />
-			<link rel="stylesheet" href="css/style-wide.css" />
-			<link rel="stylesheet" href="css/style-noscript.css" />
-		</noscript>
-		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+		<link rel="icon" href="images/logo.png" type="image/x-icon">
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
-	<body class="loading">
-		<div id="wrapper">
-			<div id="bg"></div>
-			<div id="overlay"></div>
-			<div id="main">
+	<body class="is-preload">
 
-				<!-- Header -->
-					<header id="header">
-						<h1>Welcome,  I am Parzulpan.</h1>
-						<p></p>
-						<nav>
-							<ul>
-								<div class="dropdown">
-									<button class="dropbtn">blog</button>
-									<div class="dropdown-content">
-									  <a href="https://www.cnblogs.com/parzulpan/">cnblogs</a>
-									</div>
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Wrapper -->
+					<div id="wrapper">
+
+						<!-- Panel (Banner) -->
+							<section class="panel banner right">
+								<div class="content color0 span-3-75">
+									<h1 class="major"></h1>
+									<p><strong>简 介：</strong> 待更新... </p>
+									<p><strong>联 系：</strong><a href="mailto:parzulpan@gmail.com">Email</a>&nbsp;&nbsp;&nbsp;
+										<a href="https://github.com/parzulpan">GitHub</a>&nbsp;&nbsp;&nbsp;
+										<a href="https://www.cnblogs.com/parzulpan/">Blog</a>&nbsp;&nbsp;&nbsp;
+										<a href="https://resume.parzulpan.cn">Resume</a>&nbsp;&nbsp;&nbsp; </p>
 								</div>
-								<div class="dropdown">
-									<button class="dropbtn dropbtn1">project</button>
-									<div class="dropdown-content">
-									  <a href="https://real-live.parzulpan.cn">real-live</a>
-									</div>
+								<div class="image filtered span-1-75" data-position="25% 25%">
+									<img src="images/first.jpg" alt="" />
 								</div>
-								<td></td>
-								<div class="dropdown">
-									<button class="dropbtn dropbtn2">note</button>
-									<div class="dropdown-content">
-									  <a href="https://backendnote.parzulpan.cn">backendnote</a>
-									</div>
+							</section>
+
+						<!-- Panel (Spotlight) -->
+							<section class="panel spotlight medium medium">
+								<div class="content span-9">
+									<h2 class="major">项 目</h2>
+									<p><a href="https://real-live.parzulpan.cn"><strong>网络直播聚合平台</strong></a>：简介待更新...</p>
 								</div>
-								<td></td>
-								<div class="dropdown">
-									<button class="dropbtn dropbtn3">contact</button>
-									<div class="dropdown-content">
-									  <a href="https://resume.parzulpan.cn">resume</a>
-									  <a href="https://github.com/parzulpan">github</a>
-									  <a href="mailto:parzulpan@gmail.com">email</a>
-									</div>
+								<div class="image filtered tinted" data-position="25% 25%">
+									<img src="images/project.jpg" alt="" />
 								</div>
-							</ul>
-						</nav>
-					</header>
+							</section>
+
+						<!-- Panel (Spotlight) -->
+							<section class="panel spotlight right medium">
+								<div class="content span-9">
+									<p><a href="https://backendnote.parzulpan.cn"><strong>后端开发笔记</strong></a>：这是一份后端开发笔记总结与书籍资源分享。主要包括编程语言C++、Go、Python等，数据结构和算法，系统，网络，数据库MySQL、Redis、MangoDB等，设计模式，消息队列Kafka、RocketMQ等，搜索引擎Elasticsearch，系统设计，面试相关等。</p>
+									<h2 class="major">笔 记</h2>
+								</div>
+								<div class="image filtered tinted" data-position="25% 25%">
+									<img src="images/note.jpg" alt="" />
+								</div>
+							</section>
+
+						<!-- Panel (Spotlight) -->
+							<section class="panel spotlight left medium">
+								<div class="content span-9">
+									<h2 class="major">书 籍</h2>
+									<p><strong>计算机：</strong><a href="https://book.douban.com/subject/25708312/">《C++ Primer》</a>&nbsp;&nbsp;&nbsp;</p>
+								</div>
+								<div class="image filtered tinted" data-position="25% 25%">
+									<img src="images/book.jpg" alt="" />
+								</div>
+							</section>
+
+						<!-- Panel (Spotlight) -->
+							<section class="panel spotlight bottom medium">
+								<div class="content span-9">
+									<p><strong>嘻哈：</strong><a href="https://music.douban.com/subject/27666148/">GAI - 沧海一声笑</a>&nbsp;&nbsp;&nbsp;</p>
+									<h2 class="major">音 乐</h2>
+								</div>
+								<div class="image filtered tinted" data-position="25% 25%">
+									<img src="images/music.jpg" alt="" />
+								</div>
+							</section>
+
+						<!-- Panel (Spotlight) -->
+							<section class="panel spotlight top medium">
+								<div class="content span-9">
+									<h2 class="major">电 影</h2>
+									<p><strong>喜剧：</strong><a href="https://movie.douban.com/subject/26752088/">我不是药神</a>&nbsp;&nbsp;&nbsp;</p>
+									<p><strong>待看：</strong><a href="https://movie.douban.com/subject/27060077/">绿皮书</a>&nbsp;&nbsp;&nbsp;</p>
+								</div>
+								<div class="image filtered tinted" data-position="25% 25%">
+									<img src="images/movie.jpg" alt="" />
+								</div>
+							</section>
+
+						<!-- Copyright -->
+							<div class="copyright">&copy; Powered by parzulpan | Design by <a href="https://html5up.net">HTML5 UP</a></div>
+
+					</div>
+
 			</div>
-		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/main.js"></script>
+
 	</body>
 </html>
