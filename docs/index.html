@@ -15,9 +15,6 @@
 </head>
 
 <body>
-  <nav>
-    <a href="#/Home.md">网站首页</a>
-  </nav>
   <div id="app">网站加载中...</div>
   <!-- <div data-app id="main">网站加载中...</div> -->
   <script>
@@ -25,7 +22,7 @@
       // el: '#app',
       loadNavbar: true,
       name: '咖喱橙',
-      loadSidebar: false,
+      loadSidebar: true,
       subMaxLevel: 5,
       relativePath: true,
       autoHeader: true,
@@ -84,8 +81,8 @@
     })
   </script> -->
 
-  <!-- Disqus
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/disqus.min.js"></script> -->
+  Disqus
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/disqus.min.js"></script>
 
   <script>
     if (typeof navigator.serviceWorker !== 'undefined') {
