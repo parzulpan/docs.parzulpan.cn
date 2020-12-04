@@ -11,6 +11,7 @@
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css"> -->
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/pure.css">
+  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css"> -->
 </head>
 
 <body>
@@ -21,7 +22,7 @@
       // el: '#app',
       loadNavbar: true,
       name: '咖喱橙',
-      loadSidebar: true,
+      loadSidebar: false,
       subMaxLevel: 5,
       relativePath: true,
       autoHeader: true,
@@ -50,6 +51,7 @@
         crossChapter: true,
         crossChapterText: true,
       },
+      disqus: 'shortname',
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
@@ -62,19 +64,25 @@
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-sql.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
+
+  <!-- Gitalk
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
   <script>
     const gitalk = new Gitalk({
       clientID: 'b35c311f994b4421cee3',
       clientSecret: '7eac0dc6d979c47abe2b93425464d317ec99b082',
-      repo: 'real-live',
+      repo: 'parzulpan.cn',
       owner: 'parzulpan',
       admin: ['parzulpan'],
       // facebook-like distraction free mode
       distractionFreeMode: false
     })
-  </script>
+  </script> -->
+
+  <!-- Disqus
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/disqus.min.js"></script> -->
+
   <script>
     if (typeof navigator.serviceWorker !== 'undefined') {
       navigator.serviceWorker.register('sw.js')
