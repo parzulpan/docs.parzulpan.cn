@@ -1,7 +1,17 @@
-您好，欢迎来到我的个人网站。我是一名互联网从事人员，主要方向是后台开发、大数据等，目前任职于_
+_
 
-热爱开源、读书、美食等，欢迎关注并和我交流。
+gantt
+    dateFormat YYYY-MM
+    title Progress Record
 
-<br>
+    section 后端开发
+    Completed task            :done,    des1, 2020-12-04, 2020-12-05
+    Active task               :active,  des2, 2020-12-04, 30d
+    Future task               :         des3, after des2, 1m
+    Future task2              :         des4, after des3, 5d
 
-<div align="center"> <img src="_media/bg.png"/> </div>
+    section 前端开发
+    T2: 2020-12-04, 15d
+
+    section 开源项目
+    T3: 2020-12-04, 28d
