@@ -2,11 +2,11 @@
 
 ## 目录
 
-* [语言基础](../LearnJava/Basis/JavaBasis/README.md)
+* [语言基础](BackEnd/LearnJava/Basis/JavaBasis/README.md)
 * Linux 基础
-* [MySQL 基础](../LearnJava/Basis/MySQL/README.md)
+* [MySQL 基础](BackEnd/LearnJava/Basis/MySQL/README.md)
 * Oracle 基础
-* [JDBC 核心](../LearnJava/Basis/JDBC/README.md)
+* [JDBC 核心](BackEnd/LearnJava/Basis/JDBC/README.md)
 * JUC 核心
 * NIO 核心
 * JVM 深入
