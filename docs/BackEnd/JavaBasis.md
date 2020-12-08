@@ -52,15 +52,15 @@
 
 ## JDBC 核心
 
-[JDBC 概述](BackEnd/LearnJava/Basis/JDBC/note/ch01/README.md)
-[获取数据库连接](BackEnd/LearnJava/Basis/JDBC/note/ch02/README.md)
-[实现 CRUD 操作](BackEnd/LearnJava/Basis/JDBC/note/ch03/README.md)
-[操作 BLOB 类型字段](BackEnd/LearnJava/Basis/JDBC/note/ch04/README.md)
-[批量插入](BackEnd/LearnJava/Basis/JDBC/note/ch05/README.md)
-[数据库事务](BackEnd/LearnJava/Basis/JDBC/note/ch06/README.md)
-[数据库连接池](BackEnd/LearnJava/Basis/JDBC/note/ch08/README.md)
-[commons-dbutils](BackEnd/LearnJava/Basis/JDBC/note/ch09/README.md)
-[DAO 相关](BackEnd/LearnJava/Basis/JDBC/note/ch07/README.md)
+* [JDBC 概述](BackEnd/LearnJava/Basis/JDBC/note/ch01/README.md)
+* [获取数据库连接](BackEnd/LearnJava/Basis/JDBC/note/ch02/README.md)
+* [实现 CRUD 操作](BackEnd/LearnJava/Basis/JDBC/note/ch03/README.md)
+* [操作 BLOB 类型字段](BackEnd/LearnJava/Basis/JDBC/note/ch04/README.md)
+* [批量插入](BackEnd/LearnJava/Basis/JDBC/note/ch05/README.md)
+* [数据库事务](BackEnd/LearnJava/Basis/JDBC/note/ch06/README.md)
+* [数据库连接池](BackEnd/LearnJava/Basis/JDBC/note/ch08/README.md)
+* [commons-dbutils](BackEnd/LearnJava/Basis/JDBC/note/ch09/README.md)
+* [DAO 相关](BackEnd/LearnJava/Basis/JDBC/note/ch07/README.md)
 
 ## JUC 核心
 
